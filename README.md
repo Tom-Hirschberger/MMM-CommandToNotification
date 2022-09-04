@@ -1,2 +1,2 @@
 # MMM-CommandToNotification
-A MagicMirror² module which peridocally calls configured scripts and sends the output as notification
+MagicMirror² which periodically calls configured scripts and sends the results as individual notification

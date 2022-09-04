@@ -1,0 +1,13 @@
+{
+    "sensors": [
+        {
+            "name": "Calla",
+            "mac": "AA:BB:CC:DD:EE:FF",
+            "readTemperature": true,
+            "readMoisture": true,
+            "readLight": false,
+            "readConductivity": false,
+            "readBattery": true
+        }
+    ]
+}

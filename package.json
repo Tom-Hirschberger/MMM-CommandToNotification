@@ -1,0 +1,20 @@
+{
+  "name": "MMM-CommandToNotification",
+  "version": "0.0.1",
+  "description": "",
+  "main": "MMM-CommandToNotification",
+  "dependencies": {
+    "child_process": "latest"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Tom-Hirschberger/MMM-CommandToNotification.git"
+  },
+  "author": "Thomas Hirschberger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tom-Hirschberger/MMM-CommandToNotification/issues"
+  },
+  "homepage": "https://github.com/Tom-Hirschberger/MMM-CommandToNotification/#readme"
+}
