@@ -9,38 +9,9 @@
 Module.register('MMM-CommandToNotification', {
 
   defaults: {
-    updateInterval: 10,
+    updateInterval: 30,
     commands: []
   },
-  
-  /*
-  suspend: function() {
-    const self = this
-  },
-
-  resume: function() {
-    const self = this
-  },
-
-  
-  getScripts: function () {
-		return [];
-	},
-  
-
-  getStyles: function() {
-    return []
-  },
-  
-
-  getDom: function() {
-    const self = this
-    let wrapper = document.createElement('div')
-    wrapper.classList.add("ctn")
-
-    return wrapper
-  },
-  */
 
   start: function () {
     const self = this
@@ -55,7 +26,6 @@ Module.register('MMM-CommandToNotification', {
     const self = this
     if(notification.startsWith("RESULT_")){
       self.sendNotification(notification.substring(7), payload)
-      console.log(self.name+": "+"Sending notification -> "+notification.substring(7))
     }
   },
 })
