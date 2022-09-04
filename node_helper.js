@@ -69,7 +69,7 @@ module.exports = NodeHelper.create({
             
           }
         } else {
-          console.log(self.name+": "+"Skipping script: "+curScript)
+          // console.log(self.name+": "+"Skipping script: "+curScript)
           self.cmdSkips[cmdIdx] += 1
         }
       } else {
