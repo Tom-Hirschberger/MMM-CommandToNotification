@@ -24,6 +24,22 @@ Add the following code to your ~/MagicMirror/config/config.js:
 		},
 ```
 
+### General
+| Option  | Description | Type | Default |
+| ------- | --- | --- | --- |
+| updateInterval | How often should the scripts be iterated (in seconds) | Integer | 30 |
+| commands | A array containing the command definition objects | Array | [] |
+
+### Commands
+| Option  | Description | Mandatory | Type | Default |
+| ------- | --- | --- | --- | --- |
+| script | Either a absolute path or the path of a script within "scripts" directory | true | String | null |
+| args | Arguments which should be passed to the script | false | String | "" |
+| timeout | Should the script be killed if it does not return within a specific amount of sedonds? | false | Integer | infinity |
+| notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send | false | Array | [] |
+
+
+### Example
 Add the following example to produce the following result:
 * the scripts will be iterated every 10 seconds cause no skips option is configured
 * the script "scripts/randomInteger.js" gets called every iteration
