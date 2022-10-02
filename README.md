@@ -52,7 +52,7 @@ Add the following example to produce the following result:
   * the result of the script (JSON object as string) will be send as payload of notification TEST3
 
 ```
-{
+		{
 			module: "MMM-CommandToNotification",
 			disabled: false,
 			config: {
