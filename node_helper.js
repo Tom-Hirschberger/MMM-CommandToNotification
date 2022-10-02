@@ -34,7 +34,7 @@ module.exports = NodeHelper.create({
         ){
           let fullScriptPath = curScript
           self.cmdSkips[cmdIdx] = 1
-          if(curScript.startsWith("./")){
+          if(!curScript.startsWith("/")){
             fullScriptPath = scriptsDir+"/"+curScript
           }
           let curArgs = curCmdConfig["args"]
@@ -44,7 +44,7 @@ module.exports = NodeHelper.create({
           try{
             let curCommand = fullScriptPath
             if(typeof curArgs !== "undefined"){
-              curCommand += curArgs
+              curCommand += " " + curArgs
             }
             if(typeof curCmdConfig["timeout"] !== "undefined"){
               // console.log(self.name+": Calling "+fullScriptPath+" with timeout of "+curCmdConfig["timeout"])
