@@ -18,8 +18,8 @@ Add the following code to your ~/MagicMirror/config/config.js:
 			module: "MMM-CommandToNotification",
 			disabled: false,
 			config: {
-                commands: [
-                ]
+				commands: [
+				]
 			},
 		},
 ```
@@ -52,31 +52,31 @@ Add the following example to produce the following result:
   * the result of the script (JSON object as string) will be send as payload of notification TEST3
 
 ```
-		{
+{
 			module: "MMM-CommandToNotification",
 			disabled: false,
 			config: {
 				updateInterval: 10,
-                commands: [
-                    {
-                        script: "randomInteger.js",
-                        args: "-10 10",
-                        timeout: 5,
-                        notifications: [
-                            "TEST1",
-                            "TEST2",
-                        ],
-                    },
-                    {
-                        script: "randomNumberJson.js",
-                        args: "-50 20",
-                        skips: 3,
-                        timeout: 10,
-                        notifications: [
-                            "TEST3",
-                        ],
-                    }
-                ]
+				commands: [
+					{
+						script: "randomInteger.js",
+						args: "-10 10",
+						timeout: 5,
+						notifications: [
+							"TEST1",
+							"TEST2",
+						],
+					},
+					{
+						script: "randomNumberJson.js",
+						args: "-50 20",
+						skips: 3,
+						timeout: 10,
+						notifications: [
+							"TEST3",
+						],
+					}
+				]
 			},
 		},
 ```
