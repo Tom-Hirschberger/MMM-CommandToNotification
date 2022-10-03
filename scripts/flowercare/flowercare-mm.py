@@ -32,8 +32,8 @@ for cur_sensor_config in config["sensors"]:
             cur_result["light"] = cur_poller.parameter_value('light')
         if cur_sensor_config["readConductivity"] == True:
             cur_result["conducitivity"] = cur_poller.parameter_value('conductivity')
-        if cur_sensor_config["readBattery"] == True: 
-            cur_result["battary"] = cur_poller.parameter_value('battery')
+        if cur_sensor_config["readBattery"] == True:
+            cur_result["battery"] = cur_poller.parameter_value('battery')
         results[cur_sensor_config["name"]] = cur_result
     except:
         results[cur_sensor_config["name"]] = "error"
