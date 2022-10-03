@@ -2,7 +2,7 @@
 
 MagicMirror² module which periodically calls configured scripts and sends the output as value of configurable notifications. The values can be displayed in modules like [MMM-ValuesByNotification](https://github.com/Tom-Hirschberger/MMM-ValuesByNotification).
 
-Example scripts to read the temperature values of DHT11, DHT22, DS18B20, HTU21 or BME280 connected to the raspbarry or Miraflor sensor in reach of bluetooth are included in the scripts directory.
+Example scripts to read the temperature values of DHT11, DHT22, DS18B20, HTU21 or BME280 connected to the raspbarry or Miflora sensors in reach of bluetooth are included in the scripts directory.
 
 ## Basic installation
 
@@ -48,10 +48,10 @@ Add the following code to your ~/MagicMirror/config/config.js:
 
 Add the following example to produce the following result:
 
-* the scripts will be iterated every 10 seconds cause no skips option is configured
+* the scripts will be iterated every 10 seconds
 * the script "scripts/randomInteger.js" gets called every iteration
   * a random number between -10 and 10 is produced
-  * the timeout of the script is 5 seconds. If the script does not produce any output within 5 seconds no notifications will be send
+  * the timeout of the script is 5 seconds. If the script does not produce any output within 5 seconds the call will be aborted and no notifications will be send
   * if the script produces output the output will be send as payload of the notifications TEST1 and TEST2
 * the script "scripts/randomNumberJson.js" will be called every fourth iteration because a three skips are configured
   * the script calculates a random number between -50 and 20 and produces a json object containing two values ("integer" and "float"). The float value is the random number the integer value the random number rounded as integer.
