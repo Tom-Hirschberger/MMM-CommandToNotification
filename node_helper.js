@@ -103,7 +103,6 @@ module.exports = NodeHelper.create({
             }
           } 
           catch (error) {
-            console.log("Setting error values")
             returnCode = error.status;
             output = error.stdout.toString();
           }

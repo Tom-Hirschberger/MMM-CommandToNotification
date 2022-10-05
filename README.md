@@ -43,6 +43,17 @@ Add the following code to your ~/MagicMirror/config/config.js:
 | args | Arguments which should be passed to the script | false | String | "" |
 | timeout | Should the script be killed if it does not return within a specific amount of sedonds? | false | Integer | infinity |
 | notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send | false | Array | [] |
+| conditions | A map containing conditions that need to match to send the notifications | false | Map | null |
+
+
+### Conditions
+
+**All conditions specified need to match to send notifications!**
+
+| Option  | Description | Type | Default |
+| ------- | --- | --- | --- |
+| returnCode | Specify either a single return code or a array of return codes that need to match. If a array is specified one of the values need to match (or condition). | Integer or Array of Integer | null |
+| outputContains | Specify either a single string or a array of possible strings which of one need to be present in the output (or condition). | null |
 
 ### Example
 
