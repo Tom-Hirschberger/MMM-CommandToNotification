@@ -22,6 +22,52 @@ module.exports = NodeHelper.create({
     console.log(self.name+": "+"Module helper started")
   },
 
+  validateConditions: function(curCmdConfig, output, returnCode){
+    if(typeof curCmdConfig["conditions"] !== "undefined"){
+      if (typeof curCmdConfig["conditions"]["returnCode"] !== "undefined"){
+        let matched = false
+        let returnCodeConfig = curCmdConfig["conditions"]["returnCode"]
+        if(!Array.isArray(returnCodeConfig)){
+          returnCodeConfig = [returnCodeConfig]
+        }
+
+        for(let i=0; i < returnCodeConfig.length; i++){
+          if(returnCodeConfig[i] == returnCode){
+            matched = true
+            break
+          }
+        }
+
+        if (!matched){
+          return false
+        }
+      }
+
+      if (typeof curCmdConfig["conditions"]["outputContains"] !== "undefined"){
+        let matched = false
+        let outputConfig = curCmdConfig["conditions"]["outputContains"]
+        if(!Array.isArray(outputConfig)){
+          outputConfig = [outputConfig]
+        }
+
+        for(let i=0; i < outputConfig.length; i++){
+          if(output.includes(outputConfig[i])){
+            matched = true
+            break
+          }
+        }
+        if (!matched){
+          return false
+        }
+      }
+
+      return true
+
+    } else {
+      return true
+    }
+  },
+
   callCommands: function(){
     const self = this
     console.log(self.name+": "+"Calling commands")
@@ -41,11 +87,13 @@ module.exports = NodeHelper.create({
           let curNotifications = curCmdConfig["notifications"]
 
           let output = null
-          try{
-            let curCommand = fullScriptPath
-            if(typeof curArgs !== "undefined"){
-              curCommand += " " + curArgs
-            }
+          let returnCode = 0
+          let curCommand = fullScriptPath
+          if(typeof curArgs !== "undefined"){
+            curCommand += " " + curArgs
+          }
+
+          try {
             if(typeof curCmdConfig["timeout"] !== "undefined"){
               // console.log(self.name+": Calling "+fullScriptPath+" with timeout of "+curCmdConfig["timeout"])
               output = execSync(curCommand, encoding="utf8", timeout=curCmdConfig["timeout"]).toString()
@@ -53,15 +101,18 @@ module.exports = NodeHelper.create({
               // console.log(self.name+": Calling "+fullScriptPath+" without timeout")
               output = execSync(curCommand, encoding="utf8").toString()
             }
-          } catch (err){
-            console.error(err)
-            output = null
+          } 
+          catch (error) {
+            returnCode = error.status;
+            output = error.stdout.toString();
           }
           
           if(output !== null){
             if (typeof curNotifications !== "undefined"){
-              for (let curNotiIdx = 0; curNotiIdx < curNotifications.length; curNotiIdx++){
-                self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx], output)
+              if (self.validateConditions(curCmdConfig, output, returnCode)){
+                for (let curNotiIdx = 0; curNotiIdx < curNotifications.length; curNotiIdx++){
+                  self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx], output)
+                }
               }
             } else {
               console.log(self.name+": "+"The script "+curScript+" has no notifications configured. It had been called but no notification will be send!")
