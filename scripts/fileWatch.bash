@@ -1,6 +1,6 @@
 #!/bin/bash
 fileToWatch="/home/pi/TeleFrame/images/images.json"
-dateFile=/tmp/fileWatch.date
+dateFile="/tmp/fileWatch.date"
 minimumTime=1
 
 while getopts f:t:m: flag
@@ -30,11 +30,11 @@ then
         
     if [ $diffOne -gt $minimumTime ] && [ $diffTwo -gt 0 ]
     then
-        echo "modified"
+        echo "file $fileToWatch modified"
         date +%s > $dateFile
         exit 1
     else
-        echo "unchanged or change to close"
+        echo "file $fileToWatch unchanged or change to close"
         exit 0
     fi
 else
