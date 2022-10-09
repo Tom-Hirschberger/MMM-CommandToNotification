@@ -1,10 +1,13 @@
 #!/bin/bash
 fileToWatch="/home/pi/TeleFrame/images/images.json"
 dateFile=/tmp/fileWatch.date
-while getopts f:t: flag
+minimumTime=5
+
+while getopts f:t:m: flag
 do
     case "${flag}" in
         f) fileToWatch=${OPTARG};;
+        m) minimumTime=${OPTARG};;
         t) dateFile=${OPTARG};;
         *) echo "Invalid argument ${OPTARG}";;
     esac
@@ -25,7 +28,7 @@ then
     diffOne=$(echo "$curTimestamp - $fileTimestamp" | bc)
     diffTwo=$(echo "$fileTimestamp - $lastUpdateTimestamp" | bc)
         
-    if [ $diffOne -gt 5 ] && [ $diffTwo -gt 0 ]
+    if [ $diffOne -gt $minimumTime ] && [ $diffTwo -gt 0 ]
     then
         echo "modified"
         date +%s > $dateFile
