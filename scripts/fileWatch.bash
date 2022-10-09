@@ -1,7 +1,7 @@
 #!/bin/bash
 fileToWatch="/home/pi/TeleFrame/images/images.json"
 dateFile=/tmp/fileWatch.date
-minimumTime=5
+minimumTime=1
 
 while getopts f:t:m: flag
 do
