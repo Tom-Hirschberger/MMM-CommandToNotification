@@ -2,7 +2,7 @@
 
 MagicMirror² module which periodically calls configured scripts and sends the output as value of configurable notifications. The values can be displayed in modules like [MMM-ValuesByNotification](https://github.com/Tom-Hirschberger/MMM-ValuesByNotification).
 
-Example scripts to read the temperature values of DHT11, DHT22, DS18B20, HTU21 or BME280 connected to the raspbarry or Miflora sensors in reach of bluetooth are included in the scripts directory.
+Example scripts to read the temperature values of DHT11, DHT22, DS18B20, HTU21 or BME280 connected to the raspbarry or Miflora sensors in reach of bluetooth are included in the scripts directory. There is a documentation in the [scripts directory](./scripts/README.md), too.
 
 ## Basic installation
 
