@@ -2,8 +2,10 @@
 # install:
 #sudo pip3 install miflora
 #sudo pip3 install bluepy
+#sudo pip3 install json5
 import sys
 import json
+import json5
 import pprint
 import time
 from miflora.miflora_poller import MiFloraPoller
@@ -11,7 +13,7 @@ from btlewrap.bluepy import BluepyBackend
 
 def read_json(file_path):
     with open(file_path, "r") as f:
-        return json.load(f)
+        return json5.load(f)
 
 if len(sys.argv) > 1:
     config = read_json(sys.argv[1])
