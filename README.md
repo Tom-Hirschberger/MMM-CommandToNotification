@@ -42,9 +42,23 @@ Add the following code to your ~/MagicMirror/config/config.js:
 | script | Either a absolute path or the path of a script within "scripts" directory | true | String | null |
 | args | Arguments which should be passed to the script | false | String | "" |
 | timeout | Should the script be killed if it does not return within a specific amount of sedonds? | false | Integer | infinity |
-| notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send | false | Array | [] |
+| notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send. If you want to override the payload instead of using the output please look at the notification section. | false | Array | [] |
 | conditions | A map containing conditions that need to match to send the notifications | false | Map | null |
 
+### Notifications
+
+The notifications array contains all notifications that should be send if a command is called (and the conditions matched).
+There may be situations where you want send a notification with a specific payload instead of the output of the script. You can do so if you specify a array instead of the string identifiying the notification.  
+Lets see the following example:  
+
+```json
+notifications: [
+  ["TEST1","MY_NEW_PAYLOAD"],
+  "TEST2",
+],
+```
+
+In this example the notification "TEST1" will have "MY_NEW_PAYLOAD" as output while "TEST2" contains the output of the command.
 
 ### Conditions
 
@@ -67,7 +81,7 @@ Add the following example to produce the following result:
 * the script "scripts/randomNumberJson.js" will be called every fourth iteration because a three skips are configured
   * the script calculates a random number between -50 and 20 and produces a json object containing two values ("integer" and "float"). The float value is the random number the integer value the random number rounded as integer.
   * the timeout of the script is set to 10 seconds
-  * the result of the script (JSON object as string) will be send as payload of notification TEST3
+  * the result of the script (JSON object as string) will be send as payload of notification TEST3 while TEST4 will be send with payload "true"
 
 ```json5
   {
@@ -92,6 +106,7 @@ Add the following example to produce the following result:
       timeout: 10,
       notifications: [
        "TEST3",
+       ["TEST4", true]
       ],
      }
     ]

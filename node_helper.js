@@ -96,10 +96,10 @@ module.exports = NodeHelper.create({
           try {
             if(typeof curCmdConfig["timeout"] !== "undefined"){
               // console.log(self.name+": Calling "+fullScriptPath+" with timeout of "+curCmdConfig["timeout"])
-              output = execSync(curCommand, encoding="utf8", timeout=curCmdConfig["timeout"]).toString()
+              output = execSync(curCommand, {encoding:"utf8", timeout:curCmdConfig["timeout"], cwd:scriptsDir}).toString()
             } else {
               // console.log(self.name+": Calling "+fullScriptPath+" without timeout")
-              output = execSync(curCommand, encoding="utf8").toString()
+              output = execSync(curCommand, {encoding:"utf8", cwd:scriptsDir}).toString()
             }
           } 
           catch (error) {
@@ -111,7 +111,15 @@ module.exports = NodeHelper.create({
             if (typeof curNotifications !== "undefined"){
               if (self.validateConditions(curCmdConfig, output, returnCode)){
                 for (let curNotiIdx = 0; curNotiIdx < curNotifications.length; curNotiIdx++){
-                  self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx], output)
+                  if (Array.isArray(curNotifications[curNotiIdx])){
+                    if (curNotifications[curNotiIdx].length > 1){
+                      self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx][0], curNotifications[curNotiIdx][1])
+                    } else {
+                      self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx][0], output)
+                    }
+                  } else {
+                    self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx], output)
+                  }
                 }
               }
             } else {
