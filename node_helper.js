@@ -6,7 +6,8 @@
  */
 const NodeHelper = require('node_helper')
 
-const execSync = require('child_process').execSync
+//const execSync = require('child_process').execSync
+const spawnSync = require('child_process').spawnSync
 const fs = require('fs')
 const path = require('path')
 const scriptsDir = path.join(__dirname, '/scripts')
@@ -74,37 +75,56 @@ module.exports = NodeHelper.create({
     for (let cmdIdx = 0; cmdIdx < self.config.commands.length; cmdIdx++) {
       let curCmdConfig = self.config.commands[cmdIdx]
       if(typeof curCmdConfig["script"] !== "undefined"){
-        let curScript = curCmdConfig["script"]
         if((typeof curCmdConfig["skips"] === "undefined") ||
           (curCmdConfig["skips"] < self.cmdSkips[cmdIdx])
         ){
-          let fullScriptPath = curScript
+          
           self.cmdSkips[cmdIdx] = 1
-          if(!curScript.startsWith("/")){
-            fullScriptPath = scriptsDir+"/"+curScript
-          }
+
+          let curCommand = curCmdConfig["script"]
+
+
           let curArgs = curCmdConfig["args"]
+          if(typeof curCmdConfig["args"] !== "undefined"){
+            if(Array.isArray(curCmdConfig["args"])){
+              curArgs = curCmdConfig["args"]
+            } else {
+              curArgs = curCmdConfig["args"].split(" ")
+            }
+          }
           let curNotifications = curCmdConfig["notifications"]
 
-          let output = null
-          let returnCode = 0
-          let curCommand = fullScriptPath
-          if(typeof curArgs !== "undefined"){
-            curCommand += " " + curArgs
+          let curEncoding = "utf8"
+          if(typeof curCmdConfig["encoding"] !== "undefined"){
+            curEncoding = curCmdConfig["encoding"]
           }
 
+          let options = {
+            shell: true,
+            encoding: curEncoding,
+            cwd: scriptsDir,
+          }
+
+          if(typeof curCmdConfig["timeout"] !== "undefined"){
+            options["timeout"] = curCmdConfig["timeout"]
+          }
+
+          let output = null
+          let returnCode = null
           try {
-            if(typeof curCmdConfig["timeout"] !== "undefined"){
-              // console.log(self.name+": Calling "+fullScriptPath+" with timeout of "+curCmdConfig["timeout"])
-              output = execSync(curCommand, {encoding:"utf8", timeout:curCmdConfig["timeout"], cwd:scriptsDir}).toString()
-            } else {
-              // console.log(self.name+": Calling "+fullScriptPath+" without timeout")
-              output = execSync(curCommand, {encoding:"utf8", cwd:scriptsDir}).toString()
+            // console.log("Running "+curCommand + " with args: "+curArgs.toString())
+            let spawnOutput = spawnSync(curCommand, curArgs, options)
+            // console.log(spawnOutput)
+            returnCode = spawnOutput.status
+            output = spawnOutput.stdout
+            if(returnCode == null){
+              returnCode = 1
+              output += "Timeout"
             }
-          } 
-          catch (error) {
-            returnCode = error.status;
-            output = error.stdout.toString();
+            // console.log("ReturnCode: "+returnCode)
+            // console.log("Output: "+output)
+          } catch (error) {
+            console.log(error)
           }
           
           if(output !== null){
@@ -125,7 +145,6 @@ module.exports = NodeHelper.create({
             } else {
               console.log(self.name+": "+"The script "+curScript+" has no notifications configured. It had been called but no notification will be send!")
             }
-            
           }
         } else {
           // console.log(self.name+": "+"Skipping script: "+curScript)

@@ -39,7 +39,7 @@ Add the following code to your ~/MagicMirror/config/config.js:
 
 | Option  | Description | Mandatory | Type | Default |
 | ------- | --- | --- | --- | --- |
-| script | Either a absolute path or the path of a script within "scripts" directory | true | String | null |
+| script | Either a absolute path or the realtive path of a script starting at the "scripts" directory | true | String | null |
 | args | Arguments which should be passed to the script | false | String | "" |
 | timeout | Should the script be killed if it does not return within a specific amount of sedonds? | false | Integer | infinity |
 | notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send. If you want to override the payload instead of using the output please look at the notification section. | false | Array | [] |
@@ -91,7 +91,7 @@ Add the following example to produce the following result:
     updateInterval: 10,
     commands: [
      {
-      script: "randomInteger.js",
+      script: "./randomInteger.js",
       args: "-10 10",
       timeout: 5,
       notifications: [
@@ -100,7 +100,7 @@ Add the following example to produce the following result:
       ],
      },
      {
-      script: "randomNumberJson.js",
+      script: "./randomNumberJson.js",
       args: "-50 20",
       skips: 3,
       timeout: 10,
