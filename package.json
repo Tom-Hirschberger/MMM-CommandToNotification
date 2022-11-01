@@ -4,7 +4,6 @@
   "description": "",
   "main": "MMM-CommandToNotification",
   "dependencies": {
-    "child_process": "latest"
   },
   "devDependencies": {},
   "repository": {
