@@ -6,7 +6,8 @@
  */
 const NodeHelper = require('node_helper')
 
-const execSync = require('child_process').execSync
+const spawnSync = require('child_process').spawnSync
+const spawn = require('child_process').spawn
 const fs = require('fs')
 const path = require('path')
 const scriptsDir = path.join(__dirname, '/scripts')
@@ -20,6 +21,40 @@ module.exports = NodeHelper.create({
     self.cmdSkips = {}
 
     console.log(self.name+": "+"Module helper started")
+    self.asyncOutput = {}
+  },
+
+  sleep: function(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  },
+
+  //https://stackoverflow.com/questions/14332721/node-js-spawn-child-process-and-get-terminal-output-live
+  runScript: function(command, args, options, cmdIdx, curCmdConfig, curNotifications) {
+    const self = this
+    let child = spawn(command, args, options);
+
+    let scriptOutput = null;
+
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', function(data) {
+        if (scriptOutput == null){
+          scriptOutput = ""
+        }
+        data=data.toString();
+        scriptOutput+=data;
+    });
+
+    // child.stderr.setEncoding('utf8');
+    // child.stderr.on('data', function(data) {
+    //     console.log('stderr: ' + data);
+
+    //     data=data.toString();
+    //     scriptOutput+=data;
+    // });
+
+    child.on('close', function(code) {
+        self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, scriptOutput.trim(), code)
+    });
   },
 
   validateConditions: function(curCmdConfig, output, returnCode){
@@ -68,67 +103,74 @@ module.exports = NodeHelper.create({
     }
   },
 
-  callCommands: function(){
+  callCommands: async function(){
     const self = this
     console.log(self.name+": "+"Calling commands")
     for (let cmdIdx = 0; cmdIdx < self.config.commands.length; cmdIdx++) {
       let curCmdConfig = self.config.commands[cmdIdx]
       if(typeof curCmdConfig["script"] !== "undefined"){
-        let curScript = curCmdConfig["script"]
         if((typeof curCmdConfig["skips"] === "undefined") ||
           (curCmdConfig["skips"] < self.cmdSkips[cmdIdx])
         ){
-          let fullScriptPath = curScript
+          
           self.cmdSkips[cmdIdx] = 1
-          if(!curScript.startsWith("/")){
-            fullScriptPath = scriptsDir+"/"+curScript
-          }
+
+          let curCommand = curCmdConfig["script"]
           let curArgs = curCmdConfig["args"]
+          if(typeof curCmdConfig["args"] !== "undefined"){
+            if(Array.isArray(curCmdConfig["args"])){
+              curArgs = curCmdConfig["args"]
+            } else {
+              curArgs = curCmdConfig["args"].split(" ")
+            }
+          }
           let curNotifications = curCmdConfig["notifications"]
 
-          let output = null
-          let returnCode = 0
-          let curCommand = fullScriptPath
-          if(typeof curArgs !== "undefined"){
-            curCommand += " " + curArgs
+          let curEncoding = "utf8"
+          if(typeof curCmdConfig["encoding"] !== "undefined"){
+            curEncoding = curCmdConfig["encoding"]
           }
 
-          try {
-            if(typeof curCmdConfig["timeout"] !== "undefined"){
-              // console.log(self.name+": Calling "+fullScriptPath+" with timeout of "+curCmdConfig["timeout"])
-              output = execSync(curCommand, {encoding:"utf8", timeout:curCmdConfig["timeout"], cwd:scriptsDir}).toString()
-            } else {
-              // console.log(self.name+": Calling "+fullScriptPath+" without timeout")
-              output = execSync(curCommand, {encoding:"utf8", cwd:scriptsDir}).toString()
-            }
-          } 
-          catch (error) {
-            returnCode = error.status;
-            output = error.stdout.toString();
+          let options = {
+            shell: true,
+            encoding: curEncoding,
+            cwd: scriptsDir,
           }
-          
-          if(output !== null){
-            if (typeof curNotifications !== "undefined"){
-              if (self.validateConditions(curCmdConfig, output, returnCode)){
-                for (let curNotiIdx = 0; curNotiIdx < curNotifications.length; curNotiIdx++){
-                  if (Array.isArray(curNotifications[curNotiIdx])){
-                    if (curNotifications[curNotiIdx].length > 1){
-                      self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx][0], curNotifications[curNotiIdx][1])
-                    } else {
-                      self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx][0], output)
-                    }
-                  } else {
-                    self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx], output)
-                  }
-                }
+
+          if(typeof curCmdConfig["timeout"] !== "undefined"){
+            options["timeout"] = curCmdConfig["timeout"]
+          }
+
+          let output = null
+          let returnCode = null
+          let sync = self.config.sync
+          if(typeof curCmdConfig["sync"] !== "undefined"){
+            sync = curCmdConfig["sync"]
+          }
+          try {
+            if (sync){
+              console.log("Running "+ curCommand + " synchronous")
+              let spawnOutput = spawnSync(curCommand, curArgs, options)
+              returnCode = spawnOutput.status
+              output = spawnOutput.stdout.trim()
+              if(returnCode == null){
+                returnCode = 1
+                output += "Timeout"
               }
+
+              self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
             } else {
-              console.log(self.name+": "+"The script "+curScript+" has no notifications configured. It had been called but no notification will be send!")
+              console.log("Running "+curCommand + " asynchronous")
+              self.runScript(curCommand, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
             }
-            
+          } catch (error) {
+            console.log(error)
+          }
+          if (curCmdConfig["delayNext"] || false){
+            console.log("Delaying next: "+curCmdConfig["delayNext"])
+            await self.sleep(curCmdConfig["delayNext"])
           }
         } else {
-          // console.log(self.name+": "+"Skipping script: "+curScript)
           self.cmdSkips[cmdIdx] += 1
         }
       } else {
@@ -137,7 +179,34 @@ module.exports = NodeHelper.create({
     }
   },
 
-  setDefaultsAndStart: async function(){
+  postProcessCommand: function(cmdIdx, curCmdConfig, curNotifications, output, returnCode){
+    const self = this
+    // console.log("Postprocessing cmdIdx: "+cmdIdx)
+    console.log("curCmdConfig: "+JSON.stringify(curCmdConfig))
+    // console.log(output)
+    // console.log(returnCode)
+    if(output !== null){
+      if (typeof curNotifications !== "undefined"){
+        if (self.validateConditions(curCmdConfig, output, returnCode)){
+          for (let curNotiIdx = 0; curNotiIdx < curNotifications.length; curNotiIdx++){
+            if (Array.isArray(curNotifications[curNotiIdx])){
+              if (curNotifications[curNotiIdx].length > 1){
+                self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx][0], curNotifications[curNotiIdx][1])
+              } else {
+                self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx][0], output)
+              }
+            } else {
+              self.sendSocketNotification("RESULT_"+curNotifications[curNotiIdx], output)
+            }
+          }
+        }
+      } else {
+        console.log(self.name+": "+"The command with idx: "+cmdIdx+" has no notifications configured. It had been called but no notification will be send!")
+      }
+    }
+  },
+
+  setDefaultsAndStart: function(){
     const self = this
     if(self.started){
       console.log(self.name+": "+"Setting the defaults")
@@ -152,7 +221,7 @@ module.exports = NodeHelper.create({
         console.log(self.name+": "+"Call the commands initially")
         self.callCommands()
         console.log(self.name+": "+"Reschedule the next calls")
-        await self.rescheduleCommandCall()
+        self.rescheduleCommandCall()
       }
     } else {
       console.log(self.name+": "+"Defaults can not be set because module is not started at the moment")

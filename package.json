@@ -1,11 +1,9 @@
 {
   "name": "MMM-CommandToNotification",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "MMM-CommandToNotification",
-  "dependencies": {
-    "child_process": "latest"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "repository": {
     "type": "git",
