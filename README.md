@@ -34,6 +34,7 @@ Add the following code to your ~/MagicMirror/config/config.js:
 | ------- | --- | --- | --- |
 | updateInterval | How often should the scripts be iterated (in seconds) | Integer | 30 |
 | commands | A array containing the command definition objects | Array | [] |
+| sync | Should the commands called one by one (true) or should all be started as fast as possible (false). Can be overriden for each command in the command configuration | Boolean | true |
 
 ### Commands
 
@@ -43,6 +44,8 @@ Add the following code to your ~/MagicMirror/config/config.js:
 | args | Arguments which should be passed to the script | false | String | "" |
 | timeout | Should the script be killed if it does not return within a specific amount of milliseconds? | false | Integer | infinity |
 | notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send. If you want to override the payload instead of using the output please look at the notification section. | false | Array | [] |
+| sync | Should the command by run synchronous (next command will be called after this one, true) or asynchronous (directly proceed with the next one and process output when the command finishes, false) | Boolean | true |
+| delayNext | Wait some amount of time (milliseconds) before the next command will be processed after this one has called. Make sure to set to updateInterval of the module to a value that is enough time to call and process all commands with all delays summed up! | Integer | 0 |
 | conditions | A map containing conditions that need to match to send the notifications | false | Map | null |
 
 ### Notifications
