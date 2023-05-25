@@ -53,7 +53,10 @@ module.exports = NodeHelper.create({
     // });
 
     child.on('close', function(code) {
-        self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, scriptOutput.trim(), code)
+      if (scriptOutput != null){
+        scriptOutput = scriptOutput.trim()
+      }
+      self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, scriptOutput, code)
     });
   },
 
@@ -152,7 +155,10 @@ module.exports = NodeHelper.create({
               console.log("Running "+ curCommand + " synchronous")
               let spawnOutput = spawnSync(curCommand, curArgs, options)
               returnCode = spawnOutput.status
-              output = spawnOutput.stdout.trim()
+              output = spawnOutput.stdout
+              if (output != null){
+                output = output.trim()
+              }
               if(returnCode == null){
                 returnCode = 1
                 output += "Timeout"
