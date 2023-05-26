@@ -11,7 +11,8 @@ Module.register('MMM-CommandToNotification', {
   defaults: {
     updateInterval: 30,
     commands: [],
-    sync: true
+    sync: true,
+    debug: false
   },
 
   start: function () {

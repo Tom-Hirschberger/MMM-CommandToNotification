@@ -35,6 +35,7 @@ Add the following code to your ~/MagicMirror/config/config.js:
 | updateInterval | How often should the scripts be iterated (in seconds) | Integer | 30 |
 | commands | A array containing the command definition objects | Array | [] |
 | sync | Should the commands called one by one (true) or should all be started as fast as possible (false). Can be overriden for each command in the command configuration | Boolean | true |
+| debug | This flag controls if debug messages should be output on the console | Boolean | false |
 
 ### Commands
 
