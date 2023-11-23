@@ -1,7 +1,7 @@
 {
   "name": "MMM-CommandToNotification",
   "version": "0.0.5",
-  "description": "",
+  "description": "A MagicMirror² module which calls system-commands or scripts periodically and sends the output as notifications.",
   "main": "MMM-CommandToNotification",
   "dependencies": {},
   "devDependencies": {},
@@ -9,6 +9,18 @@
     "type": "git",
     "url": "git@github.com:Tom-Hirschberger/MMM-CommandToNotification.git"
   },
+  "keywords": [
+    "MagicMirror",
+    "MM",
+    "scripts",
+    "commands",
+    "notifications",
+    "conditional",
+    "temperature",
+    "humidity",
+    "environment",
+    "sensors"
+  ],
   "author": "Thomas Hirschberger",
   "license": "MIT",
   "bugs": {

@@ -117,3 +117,7 @@ Add the following example to produce the following result:
    },
   },
 ```
+
+#### My Prusa MK4 3D-Printer setup
+
+<img src="examples/exampleSetup.png" alt="Curl->MMM-CommandToNotification->MMM-ValuesByNotification" width="600px"/>
