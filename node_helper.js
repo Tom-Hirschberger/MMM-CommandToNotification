@@ -1,4 +1,4 @@
-/* Magic Mirror²
+/* MagicMirror²
  * Module: CommandToNotification
  *
  * By Tom Hirschberger
@@ -187,10 +187,13 @@ module.exports = NodeHelper.create({
 
   postProcessCommand: function(cmdIdx, curCmdConfig, curNotifications, output, returnCode){
     const self = this
-    // console.log("Postprocessing cmdIdx: "+cmdIdx)
-    console.log("curCmdConfig: "+JSON.stringify(curCmdConfig))
-    // console.log(output)
-    // console.log(returnCode)
+    if (self.config.debug){
+      console.log("Postprocessing cmdIdx: "+cmdIdx)
+      console.log("curCmdConfig: "+JSON.stringify(curCmdConfig))
+      console.log(output)
+      console.log(returnCode)
+    }
+    
     if(output !== null){
       if (typeof curNotifications !== "undefined"){
         if (self.validateConditions(curCmdConfig, output, returnCode)){

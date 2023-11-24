@@ -1,0 +1,7 @@
+{
+    "test_data": {
+      "temp": -10.0123,
+      "humidity": 50.4567,
+      "test_string:": "this is a test"
+    }
+}
