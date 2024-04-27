@@ -13,6 +13,16 @@ Read the temperature, humidity and pressure of a BME280 sensor connected to the 
 
 The output contains a error flag which will be set to "true" if the sensor could not be found!
 
+### Requirements
+
+Install a python package:
+
+```bash
+pip3 install smbus
+```
+
+Enable the I2C module by putting `i2c-dev` to `/etc/modules` files.
+
 ### Options
 
 | Option  | Description | Type | Default |
@@ -39,11 +49,54 @@ Pritty Print:
 }
 ```
 
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 30,
+    commands: [
+     {
+      script: "./temperature/bme280",
+      args: "0x76",
+      timeout: 1000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* the BME280 sensor has the address 0x76
+* if the script does not return a value within 1000ms it will be killed
+* the script will be called every 30 seconds
+* the values will be published with the notification `TEMPERATURE`
+
 ## temperature/dht11
 
 Read the temperature and humidity of a DHT11 sensor connected to a configurable GPIO and return the values in a JSON object. The temperature will be returned in °C and Fahrenheit.
 
 The output contains a error flag which will be set to "true" if the sensor could not be found!
+
+### Requirements
+
+Install a python package:
+
+```bash
+pip3 install adafruit-circuitpython-dht
+```
+
+Install a system library:
+
+```bash
+sudo apt-get install libgpiod2
+```
 
 ### Options
 
@@ -69,6 +122,35 @@ Pritty Print:
     "error": false
 }
 ```
+
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 30,
+    commands: [
+     {
+      script: "./temperature/dht11",
+      args: "4",
+      timeout: 2000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* the DHT11 sensor is connected to GPIO 4
+* if the script does not return a value within 2000ms it will be killed
+* the script will be called every 30 seconds
+* the values will be published with the notification `TEMPERATURE`
 
 ## temperature/dht22
 
@@ -76,6 +158,20 @@ Read the temperature and humidity of a DHT22 sensor connected to a configurable 
 
 The output contains a error flag which will be set to "true" if the sensor could not be found!
 
+### Requirements
+
+Install a python package:
+
+```bash
+pip3 install adafruit-circuitpython-dht
+```
+
+Install a system library:
+
+```bash
+sudo apt-get install libgpiod2
+```
+
 ### Options
 
 | Option  | Description | Type | Default |
@@ -101,11 +197,119 @@ Pritty Print:
 }
 ```
 
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 30,
+    commands: [
+     {
+      script: "./temperature/dht22",
+      args: "4",
+      timeout: 2000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* the DHT22 sensor is connected to GPIO 4
+* if the script does not return a value within 2000ms it will be killed
+* the script will be called every 30 seconds
+* the values will be published with the notification `TEMPERATURE`
+
+## temperature/htu21
+
+Read the temperature and humidity of a HTU21 sensor connected to the I2C bus.
+
+The output contains a error flag which will be set to "true" if the sensor could not be found!
+
+### Requirements
+
+Clone a Repository and install it as a Python package:
+
+```bash
+cd ~
+git clone https://github.com/mgaggero/Adafruit_Python_HTU21D.git
+cd Adafruit_Python_HTU21D
+sudo pip3 install .
+cd ..
+rm -rf Adafruit_Python_HTU21D
+```
+
+### Example output
+
+Real:
+
+```json
+{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+```
+
+Pritty Print:
+
+```json
+{
+    "temperature_c": 22.0,
+    "humidity": 62.1,
+    "temperature_f": 71.6,
+    "error": false
+}
+```
+
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 30,
+    commands: [
+     {
+      script: "./temperature/htu21",
+      timeout: 2000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* if the script does not return a value within 2000ms it will be killed
+* the script will be called every 30 seconds
+* the values will be published with the notification `TEMPERATURE`
+
 ## temperature/ds18b20
 
 Read the temperature of a DS18B20 sensor connected to the one wire bus and return the value in a JSON object. The temperature will be returned in °C and Fahrenheit.
 
 The output contains a error flag which will be set to "true" if the sensor could not be found!
+
+### Requirements
+
+* Connect VCC pin to 3.3V
+* #Connect Ground pin to Ground
+* Add an 4.7kOhm resister between data wire and VCC
+* Add the the data wire to GPIO4 (which is the 1-wire bus pin) (more info at: https://www.circuitbasics.com/raspberry-pi-ds18b20-temperature-sensor-tutorial/)
+* Add the following lines to `/etc/modules`
+  * `w1_gpio`
+  * `w1_therm`
+* Add the following line to `/etc/boot/config.txt`
+  * `dtoverlay=w1-gpio`
+* Find the id of your sensor (starting with "28-") in `/sys/bus/w1/devices`: `ls /sys/bus/w1/devices/ | grep 28-`
+* Check if you get values: `cat /sys/bus/w1/devices/YOUR_SENSOR_ID/w1_slave`
 
 ### Options
 
@@ -131,10 +335,49 @@ Pritty Print:
 }
 ```
 
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 45,
+    commands: [
+     {
+      script: "./temperature/ds18b20",
+      args: "123456",
+      timeout: 3000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* the DS18b20 has the id "123456"
+* if the script does not return a value within 3000ms it will be killed
+* the script will be called every 45 seconds
+* the values will be published with the notification `TEMPERATURE`
+
 ## flowercare-mm.json
 
 Read the values (temperature, moisture, light, conductivity and battery) of miflora flowercare sensors and provide them as json object.
 Please see "flowercare/flowercare-mm.json" file for configuration options.
+
+## Requirements
+
+Install some python packages:
+
+```bash
+sudo pip3 install miflora
+sudo pip3 install bluepy
+sudo pip3 install json5
+```
 
 ## Options
 
