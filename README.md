@@ -41,7 +41,7 @@ Add the following code to your ~/MagicMirror/config/config.js:
 
 | Option  | Description | Mandatory | Type | Default |
 | ------- | --- | --- | --- | --- |
-| script | Either a absolute path or the realtive path of a script starting at the "scripts" directory. Make sure to add a "./" as prefix if you call a script in the "scripts" directory. | true | String | null |
+| script | Either a absolute path or the realtive path of a script starting at the "scripts" directory. | true | String | null |
 | args | Arguments which should be passed to the script | false | String | "" |
 | timeout | Should the script be killed if it does not return within a specific amount of milliseconds? | false | Integer | infinity |
 | notifications | A array containing names of the notifications to send if script returns output. If not present the script gets called but no notification will be send. If you want to override the payload instead of using the output please look at the notification section. | false | Array | [] |

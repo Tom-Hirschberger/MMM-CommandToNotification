@@ -106,6 +106,16 @@ module.exports = NodeHelper.create({
     }
   },
 
+  isPathRelative: function(thePath){
+    if (thePath.startsWith("./")){
+      return true
+    } else if (thePath.startsWith("../")){
+      return true
+    }
+
+    return false
+  },
+
   callCommands: async function(){
     const self = this
     console.log(self.name+": "+"Calling commands")
@@ -119,6 +129,11 @@ module.exports = NodeHelper.create({
           self.cmdSkips[cmdIdx] = 1
 
           let curCommand = curCmdConfig["script"]
+
+          if ((!self.isPathRelative(curCommand)) && (curCommand.indexOf("/") > 0)){
+            curCommand = "./"+curCommand
+          }
+          
           let curArgs = curCmdConfig["args"]
           if(typeof curCmdConfig["args"] !== "undefined"){
             if(Array.isArray(curCmdConfig["args"])){
@@ -172,15 +187,15 @@ module.exports = NodeHelper.create({
           } catch (error) {
             console.log(error)
           }
-          if (curCmdConfig["delayNext"] || false){
-            console.log("Delaying next: "+curCmdConfig["delayNext"])
-            await self.sleep(curCmdConfig["delayNext"])
-          }
         } else {
-          self.cmdSkips[cmdIdx] += 1
+          console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+curCommand+" does not exist!")
+        }
+        if (curCmdConfig["delayNext"] || false){
+          console.log("Delaying next: "+curCmdConfig["delayNext"])
+          await self.sleep(curCmdConfig["delayNext"])
         }
       } else {
-        console.log(self.name+": "+"The command with index "+cmdIdx+" is not configured properly. It is missing the script configuration option!")
+        self.cmdSkips[cmdIdx] += 1
       }
     }
   },
