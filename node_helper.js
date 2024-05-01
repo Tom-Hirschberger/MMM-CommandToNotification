@@ -130,72 +130,87 @@ module.exports = NodeHelper.create({
 
           let curCommand = curCmdConfig["script"]
 
-          if ((!self.isPathRelative(curCommand)) && (curCommand.indexOf("/") > 0)){
-            curCommand = "./"+curCommand
-          }
-          
-          let curArgs = curCmdConfig["args"]
-          if(typeof curCmdConfig["args"] !== "undefined"){
-            if(Array.isArray(curCmdConfig["args"])){
-              curArgs = curCmdConfig["args"]
-            } else {
-              curArgs = curCmdConfig["args"].split(" ")
+          let testCommand = curCommand
+          if (!self.isPathRelative(curCommand)){
+            if (curCommand.indexOf("/") > 0){
+              curCommand = "./"+curCommand
+              testCommand = scriptsDir+"/"+curCommand
             }
-          }
-          let curNotifications = curCmdConfig["notifications"]
-
-          let curEncoding = "utf8"
-          if(typeof curCmdConfig["encoding"] !== "undefined"){
-            curEncoding = curCmdConfig["encoding"]
+          } else {
+            testCommand = scriptsDir+"/"+curCommand
           }
 
-          let options = {
-            shell: true,
-            encoding: curEncoding,
-            cwd: scriptsDir,
+          let testPossible = false
+          if (testCommand.indexOf("/") > -1){
+            testPossible = true
           }
 
-          if(typeof curCmdConfig["timeout"] !== "undefined"){
-            options["timeout"] = curCmdConfig["timeout"]
-          }
-
-          let output = null
-          let returnCode = null
-          let sync = self.config.sync
-          if(typeof curCmdConfig["sync"] !== "undefined"){
-            sync = curCmdConfig["sync"]
-          }
-          try {
-            if (sync){
-              console.log("Running "+ curCommand + " synchronous")
-              let spawnOutput = spawnSync(curCommand, curArgs, options)
-              returnCode = spawnOutput.status
-              output = spawnOutput.stdout
-              if (output != null){
-                output = output.trim()
+          if ((!testPossible) || fs.existsSync(testCommand)){
+            let curArgs = curCmdConfig["args"]
+            if(typeof curCmdConfig["args"] !== "undefined"){
+              if(Array.isArray(curCmdConfig["args"])){
+                curArgs = curCmdConfig["args"]
+              } else {
+                curArgs = curCmdConfig["args"].split(" ")
               }
-              if(returnCode == null){
-                returnCode = 1
-                output += "Timeout"
-              }
-
-              self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
-            } else {
-              console.log("Running "+curCommand + " asynchronous")
-              self.runScript(curCommand, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
             }
-          } catch (error) {
-            console.log(error)
+            let curNotifications = curCmdConfig["notifications"]
+
+            let curEncoding = "utf8"
+            if(typeof curCmdConfig["encoding"] !== "undefined"){
+              curEncoding = curCmdConfig["encoding"]
+            }
+
+            let options = {
+              shell: true,
+              encoding: curEncoding,
+              cwd: scriptsDir,
+            }
+
+            if(typeof curCmdConfig["timeout"] !== "undefined"){
+              options["timeout"] = curCmdConfig["timeout"]
+            }
+
+            let output = null
+            let returnCode = null
+            let sync = self.config.sync
+            if(typeof curCmdConfig["sync"] !== "undefined"){
+              sync = curCmdConfig["sync"]
+            }
+            try {
+              if (sync){
+                console.log("Running "+ curCommand + " synchronous")
+                let spawnOutput = spawnSync(curCommand, curArgs, options)
+                returnCode = spawnOutput.status
+                output = spawnOutput.stdout
+                if (output != null){
+                  output = output.trim()
+                }
+                if(returnCode == null){
+                  returnCode = 1
+                  output += "Timeout"
+                }
+
+                self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
+              } else {
+                console.log("Running "+curCommand + " asynchronous")
+                self.runScript(curCommand, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
+              }
+            } catch (error) {
+              console.log(error)
+            }
+          } else {
+            console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+testCommand+" does not exist!")
+          }
+          if (curCmdConfig["delayNext"] || false){
+            console.log("Delaying next: "+curCmdConfig["delayNext"])
+            await self.sleep(curCmdConfig["delayNext"])
           }
         } else {
-          console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+curCommand+" does not exist!")
-        }
-        if (curCmdConfig["delayNext"] || false){
-          console.log("Delaying next: "+curCmdConfig["delayNext"])
-          await self.sleep(curCmdConfig["delayNext"])
+          self.cmdSkips[cmdIdx] += 1
         }
       } else {
-        self.cmdSkips[cmdIdx] += 1
+        console.log(self.name+": "+"The command with index "+cmdIdx+" is not configured properly. It is missing the script configuration option!")
       }
     }
   },
