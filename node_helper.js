@@ -106,14 +106,48 @@ module.exports = NodeHelper.create({
     }
   },
 
-  isPathRelative: function(thePath){
-    if (thePath.startsWith("./")){
-      return true
-    } else if (thePath.startsWith("../")){
-      return true
+  validateAndModifyPath: function(thePath){
+    let newPath = null
+    let testPath = null
+
+    if(thePath.startsWith("/")){
+      //absolute path. Nothing to do
+      newPath = thePath
+      testPath = newPath
+    } else if (thePath.indexOf("/") > 0){
+      //path contains a "/". lets check if it is a relative one
+      if (thePath.startsWith("./")){
+        //relative starting at the current directory
+        newPath = thePath
+        testPath = scriptsDir+thePath.substring(1)
+      } else if (thePath.startsWith("../")) {
+        //relative targeting the directory one up
+        newPath = thePath
+        testPath = scriptsDir+"/"+thePath
+      } else {
+        //its a relative path so we add a "./"
+        newPath = "./"+thePath
+        testPath = scriptsDir+"/"+thePath
+      }
+    } else {
+      //as it is a path without any "/" it is either a script in the scripts directory or a command in $PATH
+      //lets check if the script exists in the script directory
+      testPath = scriptsDir+"/"+thePath
+      if(fs.existsSync(testPath)){
+        //its a script in the scripts dir
+        newPath = testPath
+      } else {
+        //it might be a command in $PATH but we can not test it
+        newPath = thePath
+        testPath = null
+      }
     }
 
-    return false
+    if (testPath != null){
+      testPath = fs.realpathSync(testPath)
+    }
+
+    return {"thePath": newPath, "testPath": testPath}
   },
 
   callCommands: async function(){
@@ -129,23 +163,10 @@ module.exports = NodeHelper.create({
           self.cmdSkips[cmdIdx] = 1
 
           let curCommand = curCmdConfig["script"]
+          
+          let modCommand = self.validateAndModifyPath(curCommand)
 
-          let testCommand = curCommand
-          if (!self.isPathRelative(curCommand)){
-            if (curCommand.indexOf("/") > 0){
-              curCommand = "./"+curCommand
-              testCommand = scriptsDir+"/"+curCommand
-            }
-          } else {
-            testCommand = scriptsDir+"/"+curCommand
-          }
-
-          let testPossible = false
-          if (testCommand.indexOf("/") > -1){
-            testPossible = true
-          }
-
-          if ((!testPossible) || fs.existsSync(testCommand)){
+          if ((modCommand.testPath == null) || fs.existsSync(modCommand.testPath)){
             let curArgs = curCmdConfig["args"]
             if(typeof curCmdConfig["args"] !== "undefined"){
               if(Array.isArray(curCmdConfig["args"])){
@@ -179,8 +200,8 @@ module.exports = NodeHelper.create({
             }
             try {
               if (sync){
-                console.log("Running "+ curCommand + " synchronous")
-                let spawnOutput = spawnSync(curCommand, curArgs, options)
+                console.log("Running "+ modCommand.thePath + " synchronous")
+                let spawnOutput = spawnSync(modCommand.thePath, curArgs, options)
                 returnCode = spawnOutput.status
                 output = spawnOutput.stdout
                 if (output != null){
@@ -194,13 +215,13 @@ module.exports = NodeHelper.create({
                 self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
               } else {
                 console.log("Running "+curCommand + " asynchronous")
-                self.runScript(curCommand, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
+                self.runScript(modCommand.thePath, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
               }
             } catch (error) {
               console.log(error)
             }
           } else {
-            console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+testCommand+" does not exist!")
+            console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" does not exist!")
           }
           if (curCmdConfig["delayNext"] || false){
             console.log("Delaying next: "+curCmdConfig["delayNext"])
