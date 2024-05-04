@@ -167,58 +167,71 @@ module.exports = NodeHelper.create({
           let modCommand = self.validateAndModifyPath(curCommand)
 
           if ((modCommand.testPath == null) || fs.existsSync(modCommand.testPath)){
-            let curArgs = curCmdConfig["args"]
-            if(typeof curCmdConfig["args"] !== "undefined"){
-              if(Array.isArray(curCmdConfig["args"])){
-                curArgs = curCmdConfig["args"]
-              } else {
-                curArgs = curCmdConfig["args"].split(" ")
+            let isExecutable = true
+            if (modCommand.testPath != null){
+              try {
+                fs.accessSync(modCommand.testPath, fs.constants.X_OK)
+              } catch(err) {
+                isExecutable = false
               }
             }
-            let curNotifications = curCmdConfig["notifications"]
-
-            let curEncoding = "utf8"
-            if(typeof curCmdConfig["encoding"] !== "undefined"){
-              curEncoding = curCmdConfig["encoding"]
-            }
-
-            let options = {
-              shell: true,
-              encoding: curEncoding,
-              cwd: scriptsDir,
-            }
-
-            if(typeof curCmdConfig["timeout"] !== "undefined"){
-              options["timeout"] = curCmdConfig["timeout"]
-            }
-
-            let output = null
-            let returnCode = null
-            let sync = self.config.sync
-            if(typeof curCmdConfig["sync"] !== "undefined"){
-              sync = curCmdConfig["sync"]
-            }
-            try {
-              if (sync){
-                console.log("Running "+ modCommand.thePath + " synchronous")
-                let spawnOutput = spawnSync(modCommand.thePath, curArgs, options)
-                returnCode = spawnOutput.status
-                output = spawnOutput.stdout
-                if (output != null){
-                  output = output.trim()
+            
+            if (isExecutable){
+              let curArgs = curCmdConfig["args"]
+              if(typeof curCmdConfig["args"] !== "undefined"){
+                if(Array.isArray(curCmdConfig["args"])){
+                  curArgs = curCmdConfig["args"]
+                } else {
+                  curArgs = curCmdConfig["args"].split(" ")
                 }
-                if(returnCode == null){
-                  returnCode = 1
-                  output += "Timeout"
-                }
-
-                self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
-              } else {
-                console.log("Running "+curCommand + " asynchronous")
-                self.runScript(modCommand.thePath, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
               }
-            } catch (error) {
-              console.log(error)
+              let curNotifications = curCmdConfig["notifications"]
+
+              let curEncoding = "utf8"
+              if(typeof curCmdConfig["encoding"] !== "undefined"){
+                curEncoding = curCmdConfig["encoding"]
+              }
+
+              let options = {
+                shell: true,
+                encoding: curEncoding,
+                cwd: scriptsDir,
+              }
+
+              if(typeof curCmdConfig["timeout"] !== "undefined"){
+                options["timeout"] = curCmdConfig["timeout"]
+              }
+
+              let output = null
+              let returnCode = null
+              let sync = self.config.sync
+              if(typeof curCmdConfig["sync"] !== "undefined"){
+                sync = curCmdConfig["sync"]
+              }
+              try {
+                if (sync){
+                  console.log("Running "+ modCommand.thePath + " synchronous")
+                  let spawnOutput = spawnSync(modCommand.thePath, curArgs, options)
+                  returnCode = spawnOutput.status
+                  output = spawnOutput.stdout
+                  if (output != null){
+                    output = output.trim()
+                  }
+                  if(returnCode == null){
+                    returnCode = 1
+                    output += "Timeout"
+                  }
+
+                  self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
+                } else {
+                  console.log("Running "+curCommand + " asynchronous")
+                  self.runScript(modCommand.thePath, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
+                }
+              } catch (error) {
+                console.log(error)
+              }
+            } else {
+              console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" is not executable!")
             }
           } else {
             console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" does not exist!")
