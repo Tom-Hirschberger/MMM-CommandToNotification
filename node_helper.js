@@ -19,8 +19,6 @@ module.exports = NodeHelper.create({
     self.started = false
 
     self.cmdSkips = {}
-
-    console.log(self.name+": "+"Module helper started")
     self.asyncOutput = {}
   },
 
@@ -43,14 +41,6 @@ module.exports = NodeHelper.create({
         data=data.toString();
         scriptOutput+=data;
     });
-
-    // child.stderr.setEncoding('utf8');
-    // child.stderr.on('data', function(data) {
-    //     console.log('stderr: ' + data);
-
-    //     data=data.toString();
-    //     scriptOutput+=data;
-    // });
 
     child.on('close', function(code) {
       if (scriptOutput != null){
@@ -144,7 +134,11 @@ module.exports = NodeHelper.create({
     }
 
     if (testPath != null){
-      testPath = fs.realpathSync(testPath)
+      try {
+        testPath = fs.realpathSync(testPath)
+      } catch {
+        testPath = testPath
+      }
     }
 
     return {"thePath": newPath, "testPath": testPath}
@@ -210,7 +204,10 @@ module.exports = NodeHelper.create({
               }
               try {
                 if (sync){
-                  console.log("Running "+ modCommand.thePath + " synchronous")
+                  if (self.config.debug){
+                    console.log(self.name+": Running "+ modCommand.thePath + " synchronous")
+                  }
+                  
                   let spawnOutput = spawnSync(modCommand.thePath, curArgs, options)
                   returnCode = spawnOutput.status
                   output = spawnOutput.stdout
@@ -224,27 +221,32 @@ module.exports = NodeHelper.create({
 
                   self.postProcessCommand(cmdIdx, curCmdConfig, curNotifications, output, returnCode)
                 } else {
-                  console.log("Running "+curCommand + " asynchronous")
+                  if (self.config.debug){
+                    console.log(self.name+": Running "+curCommand + " asynchronous")
+                  }
                   self.runScript(modCommand.thePath, curArgs, options, cmdIdx, curCmdConfig, curNotifications)
                 }
               } catch (error) {
+                console.log(self.name+": Error during call of command with index "+cmdIdx)
                 console.log(error)
               }
             } else {
-              console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" is not executable!")
+              console.log(self.name+": The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" is not executable!")
             }
           } else {
-            console.log(self.name+": "+"The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" does not exist!")
+            console.log(self.name+": The command with index "+cmdIdx+" could not be executed. The file "+modCommand.testPath+" does not exist!")
           }
           if (curCmdConfig["delayNext"] || false){
-            console.log("Delaying next: "+curCmdConfig["delayNext"])
+            if (self.config.debug){
+              console.log(self.name+": Delaying next: "+curCmdConfig["delayNext"])
+            }
             await self.sleep(curCmdConfig["delayNext"])
           }
         } else {
           self.cmdSkips[cmdIdx] += 1
         }
       } else {
-        console.log(self.name+": "+"The command with index "+cmdIdx+" is not configured properly. It is missing the script configuration option!")
+        console.log(self.name+": The command with index "+cmdIdx+" is not configured properly. It is missing the script configuration option!")
       }
     }
   },
@@ -252,8 +254,8 @@ module.exports = NodeHelper.create({
   postProcessCommand: function(cmdIdx, curCmdConfig, curNotifications, output, returnCode){
     const self = this
     if (self.config.debug){
-      console.log("Postprocessing cmdIdx: "+cmdIdx)
-      console.log("curCmdConfig: "+JSON.stringify(curCmdConfig))
+      console.log(self.name+": Postprocessing cmdIdx: "+cmdIdx)
+      console.log(self.name+": curCmdConfig: "+JSON.stringify(curCmdConfig))
       console.log(output)
       console.log(returnCode)
     }
@@ -274,7 +276,7 @@ module.exports = NodeHelper.create({
           }
         }
       } else {
-        console.log(self.name+": "+"The command with idx: "+cmdIdx+" has no notifications configured. It had been called but no notification will be send!")
+        console.log(self.name+": The command with idx: "+cmdIdx+" has no notifications configured. It had been called but no notification will be send!")
       }
     }
   },
@@ -282,7 +284,9 @@ module.exports = NodeHelper.create({
   setDefaultsAndStart: function(){
     const self = this
     if(self.started){
-      console.log(self.name+": "+"Setting the defaults")
+      if (self.config.debug){
+        console.log(self.name+": Setting the defaults")
+      }
       if (typeof self.config["commands"] !== "undefined"){
         for (let cmdIdx = 0; cmdIdx < self.config.commands.length; cmdIdx++) {
           let curCmdConfig = self.config.commands[cmdIdx]
@@ -291,13 +295,17 @@ module.exports = NodeHelper.create({
           }
         }
 
-        console.log(self.name+": "+"Call the commands initially")
+        if (self.config.debug){
+          console.log(self.name+": Call the commands initially")
+        }
         self.callCommands()
-        console.log(self.name+": "+"Reschedule the next calls")
+        if (self.config.debug){
+          console.log(self.name+": Reschedule the next calls")
+        }
         self.rescheduleCommandCall()
       }
     } else {
-      console.log(self.name+": "+"Defaults can not be set because module is not started at the moment")
+      console.log(self.name+": Defaults can not be set because module is not started at the moment")
     }
   },
 
@@ -315,10 +323,8 @@ module.exports = NodeHelper.create({
   socketNotificationReceived: function (notification, payload) {
     const self = this
     if (notification === 'CONFIG' && self.started === false) {
-      console.log(self.name+": "+"node_helper received CONFIG notification")
       self.config = payload
       self.started = true
-      console.log(self.name+": "+"node_helper now will set some defaults")
       self.setDefaultsAndStart()
     }
   }
