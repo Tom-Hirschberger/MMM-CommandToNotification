@@ -291,6 +291,131 @@ This config results in:
 * the script will be called every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
+## temperature/sht31d
+
+Read the temperature and humidity of a SHT31d sensor connected to the I2C bus.
+
+The output contains a error flag which will be set to "true" if the sensor could not be found!
+
+### Requirements
+
+Install some Python packages:
+
+```bash
+cd ~
+sudo pip3 install --upgrade adafruit-python-shell
+wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/raspi-blinka.py
+sudo python3 raspi-blinka.py
+sudo pip3 install adafruit-circuitpython-sht31d
+```
+
+### Example output
+
+Real:
+
+```json
+{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+```
+
+Pritty Print:
+
+```json
+{
+    "temperature_c": 22.0,
+    "humidity": 62.1,
+    "temperature_f": 71.6,
+    "error": false
+}
+```
+
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 30,
+    commands: [
+     {
+      script: "./temperature/sht31d",
+      timeout: 2000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* if the script does not return a value within 2000ms it will be killed
+* the script will be called every 30 seconds
+* the values will be published with the notification `TEMPERATURE`
+
+## temperature/shtc3
+
+Read the temperature and humidity of a SHTC3 sensor connected to the I2C bus.
+
+The output contains a error flag which will be set to "true" if the sensor could not be found!
+
+### Requirements
+
+Install a Python package:
+
+```bash
+cd ~
+sudo pip3 install smbus2
+```
+
+### Example output
+
+Real:
+
+```json
+{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+```
+
+Pritty Print:
+
+```json
+{
+    "temperature_c": 22.0,
+    "humidity": 62.1,
+    "temperature_f": 71.6,
+    "error": false
+}
+```
+
+### Example config
+
+```json5
+  {
+   module: "MMM-CommandToNotification",
+   disabled: false,
+   config: {
+    updateInterval: 30,
+    commands: [
+     {
+      script: "./temperature/shtc3",
+      timeout: 2000,
+      notifications: [
+       "TEMPERATURE",
+      ],
+     },
+    ]
+   },
+  },
+```
+
+This config results in:
+
+* if the script does not return a value within 2000ms it will be killed
+* the script will be called every 30 seconds
+* the values will be published with the notification `TEMPERATURE`
+
 ## temperature/ds18b20
 
 Read the temperature of a DS18B20 sensor connected to the one wire bus and return the value in a JSON object. The temperature will be returned in °C and Fahrenheit.
