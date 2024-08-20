@@ -35,16 +35,21 @@ def main(args):
       return create_job.returncode
 
   if args.run:
-    if args.verbose:
-      print("Running scripts...")
+    if len(args.vars) > 0:
+      script = args.vars[0]
 
-    total_return_code = 0
-    for script in args.vars:
-      if args.verbose:
-        print("Running script %s" % script)
-      run_job = subprocess.run([venv_py_bin_path, script], text=True, capture_output=True)
-      if run_job.returncode > total_return_code:
-        total_return_code = run_job.returncode
+      script_args = []
+      if len(args.vars) > 1:
+        script_args = args.vars[1:]
+
+      if len(script_args) > 0:
+        if args.verbose:
+          print("Running script %s with arguments: %s" % (script, script_args))
+        run_job = subprocess.run([venv_py_bin_path, script], text=True, capture_output=True)
+      else:
+        if args.verbose:
+          print("Running script %s" % script)
+        run_job = subprocess.run([venv_py_bin_path, script, *script_args], text=True, capture_output=True)
 
       print(run_job.stdout.strip())
       if run_job.returncode > 0:
