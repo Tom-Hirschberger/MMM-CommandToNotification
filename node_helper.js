@@ -153,11 +153,11 @@ module.exports = NodeHelper.create({
         if((typeof curCmdConfig["skips"] === "undefined") ||
           (curCmdConfig["skips"] < self.cmdSkips[cmdIdx])
         ){
-          
+
           self.cmdSkips[cmdIdx] = 1
 
           let curCommand = curCmdConfig["script"]
-          
+
           let modCommand = self.validateAndModifyPath(curCommand)
 
           if ((modCommand.testPath == null) || fs.existsSync(modCommand.testPath)){
@@ -169,7 +169,7 @@ module.exports = NodeHelper.create({
                 isExecutable = false
               }
             }
-            
+
             if (isExecutable){
               let curArgs = curCmdConfig["args"]
               if(typeof curCmdConfig["args"] !== "undefined"){
@@ -207,7 +207,7 @@ module.exports = NodeHelper.create({
                   if (self.config.debug){
                     console.log(self.name+": Running "+ modCommand.thePath + " synchronous")
                   }
-                  
+
                   let spawnOutput = spawnSync(modCommand.thePath, curArgs, options)
                   returnCode = spawnOutput.status
                   output = spawnOutput.stdout
@@ -257,9 +257,9 @@ module.exports = NodeHelper.create({
       console.log(self.name+": Postprocessing cmdIdx: "+cmdIdx)
       console.log(self.name+": curCmdConfig: "+JSON.stringify(curCmdConfig))
       console.log(output)
-      console.log(returnCode)
+      console.log("Return code: "+returnCode)
     }
-    
+
     if(output !== null){
       if (typeof curNotifications !== "undefined"){
         if (self.validateConditions(curCmdConfig, output, returnCode)){

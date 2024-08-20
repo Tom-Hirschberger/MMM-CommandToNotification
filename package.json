@@ -1,6 +1,6 @@
 {
   "name": "MMM-CommandToNotification",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A MagicMirror² module which calls system-commands or scripts periodically and sends the output as notifications.",
   "main": "MMM-CommandToNotification",
   "dependencies": {},
