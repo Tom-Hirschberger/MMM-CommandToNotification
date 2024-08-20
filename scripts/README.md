@@ -3,7 +3,9 @@
 This directory contains some example scripts to read environment sensors and more.
 Please check the script files for installation instructions in the header lines.
 
-**Please do not modfiy the script files in this directory or you will get problems during updates of the module.**
+As of version 0.0.8 of this module i would suggest to use the virtual environment wrapper script `venvWrapper.py` to install the dependencies and run any of the python scripts in this directory. All instructions in this readme make use of the script now!
+
+**Please do not modfiy the script files in this directory or you will get problems during updates of the module. Rather copy and modify them if you need to make any changes!**
 
 You can put your own files within this directory they will be ignored during updates.
 
@@ -15,13 +17,42 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-Install a python package:
+* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
-pip3 install smbus
+if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
 ```
 
-Enable the I2C module by putting `i2c-dev` to `/etc/modules` files.
+```bash
+sudo reboot
+```
+
+* Install the Python Virtual Environment System Package:
+
+```bash
+sudo apt -y update && sudo apt -y install python3-venv
+```
+
+* Use the wrapper script to create the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs smbus
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --run temperature/bme280
+```
 
 ### Options
 
@@ -59,8 +90,8 @@ Pritty Print:
     updateInterval: 30,
     commands: [
      {
-      script: "./temperature/bme280",
-      args: "0x76",
+      script: "./venvWrapper.py",
+      args: ["--run", "./temperature/bme280", "0x76"],
       timeout: 1000,
       notifications: [
        "TEMPERATURE",
@@ -75,7 +106,7 @@ This config results in:
 
 * the BME280 sensor has the address 0x76
 * if the script does not return a value within 1000ms it will be killed
-* the script will be called every 30 seconds
+* the script will be called by the wrapper every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
 ## temperature/dht11
@@ -86,16 +117,31 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-Install a python package:
+* Install the Python Virtual Environment and `libgpiod2` System Package:
 
 ```bash
-pip3 install adafruit-circuitpython-dht
+sudo apt -y update && sudo apt -y install python3-venv libgpiod2
 ```
 
-Install a system library:
+* Use the wrapper script to create the virtual environment:
 
 ```bash
-sudo apt-get install libgpiod2
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-dht
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --run temperature/dht11
 ```
 
 ### Options
@@ -133,8 +179,8 @@ Pritty Print:
     updateInterval: 30,
     commands: [
      {
-      script: "./temperature/dht11",
-      args: "4",
+      script: "./venvWrapper.py",
+      args: ["--run", "./temperature/dht11", "4"],
       timeout: 2000,
       notifications: [
        "TEMPERATURE",
@@ -149,7 +195,7 @@ This config results in:
 
 * the DHT11 sensor is connected to GPIO 4
 * if the script does not return a value within 2000ms it will be killed
-* the script will be called every 30 seconds
+* the script will be called by the wrapper every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
 ## temperature/dht22
@@ -160,16 +206,31 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-Install a python package:
+* Install the Python Virtual Environment and `libgpiod2` System Package:
 
 ```bash
-pip3 install adafruit-circuitpython-dht
+sudo apt -y update && sudo apt -y install python3-venv libgpiod2
 ```
 
-Install a system library:
+* Use the wrapper script to create the virtual environment:
 
 ```bash
-sudo apt-get install libgpiod2
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-dht
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --run temperature/dht22
 ```
 
 ### Options
@@ -207,8 +268,8 @@ Pritty Print:
     updateInterval: 30,
     commands: [
      {
-      script: "./temperature/dht22",
-      args: "4",
+      script: "./venvWrapper.py",
+      args: ["--run", "./temperature/dht22", "4"],
       timeout: 2000,
       notifications: [
        "TEMPERATURE",
@@ -223,7 +284,7 @@ This config results in:
 
 * the DHT22 sensor is connected to GPIO 4
 * if the script does not return a value within 2000ms it will be killed
-* the script will be called every 30 seconds
+* the script will be called by the wrapper every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
 ## temperature/htu21
@@ -234,15 +295,41 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-Clone a Repository and install it as a Python package:
+* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
-cd ~
-git clone https://github.com/mgaggero/Adafruit_Python_HTU21D.git
-cd Adafruit_Python_HTU21D
-sudo pip3 install .
-cd ..
-rm -rf Adafruit_Python_HTU21D
+if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
+```
+
+```bash
+sudo reboot
+```
+
+* Install the Python Virtual Environment System Package:
+
+```bash
+sudo apt -y update && sudo apt -y install python3-venv
+```
+
+* Use the wrapper script to create the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-htu21d
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --run temperature/htu21
 ```
 
 ### Example output
@@ -274,7 +361,8 @@ Pritty Print:
     updateInterval: 30,
     commands: [
      {
-      script: "./temperature/htu21",
+      script: "./venvWrapper.py",
+      args: ["--run", "./temperature/htu21"],
       timeout: 2000,
       notifications: [
        "TEMPERATURE",
@@ -288,7 +376,7 @@ Pritty Print:
 This config results in:
 
 * if the script does not return a value within 2000ms it will be killed
-* the script will be called every 30 seconds
+* the script will be called by the wrapper every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
 ## temperature/sht31d
@@ -299,14 +387,41 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-Install some Python packages:
+* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
-cd ~
-sudo pip3 install --upgrade adafruit-python-shell
-wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/raspi-blinka.py
-sudo python3 raspi-blinka.py
-sudo pip3 install adafruit-circuitpython-sht31d
+if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
+```
+
+```bash
+sudo reboot
+```
+
+* Install the Python Virtual Environment System Package:
+
+```bash
+sudo apt -y update && sudo apt -y install python3-venv
+```
+
+* Use the wrapper script to create the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-sht31d
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --run temperature/sht31d
 ```
 
 ### Example output
@@ -338,7 +453,8 @@ Pritty Print:
     updateInterval: 30,
     commands: [
      {
-      script: "./temperature/sht31d",
+      script: "./venvWrapper.py",
+      args: ["--run", "./temperature/sht31d"],
       timeout: 2000,
       notifications: [
        "TEMPERATURE",
@@ -352,7 +468,7 @@ Pritty Print:
 This config results in:
 
 * if the script does not return a value within 2000ms it will be killed
-* the script will be called every 30 seconds
+* the script will be called by the wrapper every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
 ## temperature/shtc3
@@ -363,11 +479,41 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-Install a Python package:
+* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
-cd ~
-sudo pip3 install smbus2
+if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
+```
+
+```bash
+sudo reboot
+```
+
+* Install the Python Virtual Environment System Package:
+
+```bash
+sudo apt -y update && sudo apt -y install python3-venv
+```
+
+* Use the wrapper script to create the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs smbus2
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --run temperature/shtc3
 ```
 
 ### Example output
@@ -399,7 +545,8 @@ Pritty Print:
     updateInterval: 30,
     commands: [
      {
-      script: "./temperature/shtc3",
+      script: "./venvWrapper.py",
+      args: ["--run", "./temperature/shtc3"],
       timeout: 2000,
       notifications: [
        "TEMPERATURE",
@@ -413,7 +560,7 @@ Pritty Print:
 This config results in:
 
 * if the script does not return a value within 2000ms it will be killed
-* the script will be called every 30 seconds
+* the script will be called by the wrapper every 30 seconds
 * the values will be published with the notification `TEMPERATURE`
 
 ## temperature/ds18b20
@@ -494,14 +641,26 @@ This config results in:
 Read the values (temperature, moisture, light, conductivity and battery) of miflora flowercare sensors and provide them as json object.
 Please see "flowercare/flowercare-mm.json" file for configuration options.
 
-## Requirements
+### Requirements
 
-Install some python packages:
+* Install the Python Virtual Environment System Package:
 
 ```bash
-sudo pip3 install miflora
-sudo pip3 install bluepy
-sudo pip3 install json5
+sudo apt -y update && sudo apt -y install python3-venv
+```
+
+* Use the wrapper script to create the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
+./venvWrapper.py --venv-name py-venv --install-libs miflora bluepy json5
 ```
 
 ## Options
@@ -541,7 +700,7 @@ Pritty Print:
 ## fileWatch.bash
 
 Watch a file for changes (modified timestamp) and change return code / massage of the script if it gets modified.
-To save the timestamp of the last run a temporary file will be created. The path of the file can be configured via command line arguments.  
+To save the timestamp of the last run a temporary file will be created. The path of the file can be configured via command line arguments.
 **If you want to run multiple instances of the script you need to specify different temporary files!**
 
 ## Options
