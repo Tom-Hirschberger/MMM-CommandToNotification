@@ -3,14 +3,15 @@ import subprocess
 import argparse
 import sys
 import os
-venv_name = "py-venv"
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-venv_py_bin_path = "%s/%s/bin/python3" % (script_dir, venv_name)
-venv_pip_bin_path = "%s/%s/bin/pip3" % (script_dir, venv_name)
-org_py_bin = sys.executable
 
 def main(args):
+  if args.verbose:
+    print("Will use %s as virtual env name!" % args.venv_name)
+
+  script_dir = os.path.dirname(os.path.abspath(__file__))
+  venv_py_bin_path = "%s/%s/bin/python3" % (script_dir, args.venv_name)
+  venv_pip_bin_path = "%s/%s/bin/pip3" % (script_dir, args.venv_name)
+  org_py_bin = sys.executable
   if args.create and args.run:
     if args.verbose:
       print("Either use \"--create\" or \"--run\". Aborting!")
@@ -18,19 +19,19 @@ def main(args):
 
   if args.create:
     if args.verbose:
-      print("Creating venv %s..." % venv_name)
+      print("Creating venv %s in %s/%s..." % (args.venv_name, script_dir, args.venv_name))
     if os.path.exists(venv_py_bin_path):
       if args.verbose:
-        print("Create option is present but the venv %s does exist already. Skipping!" % venv_name)
+        print("The venv %s does exist already. Skipping!" % args.venv_name)
       return 3
     else:
       create_job = subprocess.run([org_py_bin, "-m", "venv", "py-venv"])
       if create_job.returncode > 0:
         if args.verbose:
-          print("Create of venv %s failed!" % venv_name)
+          print("Create of venv %s failed!" % args.venv_name)
       else:
         if args.verbose:
-          print("Created venv %s" % venv_name)
+          print("Created venv %s" % args.venv_name)
       return create_job.returncode
 
   if args.run:
@@ -61,8 +62,10 @@ def main(args):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description="Create a virtual env, install libs or run commands in a previous created virtual env")
   parser.add_argument("--create", action="store_true", default=False, help="create the virtual env")
+  parser.add_argument("--venv-name", default="py-venv", help="the name of the virtual env to create or use")
   parser.add_argument("--install-libs", action="store_true", default=False, help="install libraries in the virtual env")
   parser.add_argument("--verbose", action="store_true", default=False, help="print more output")
+
   parser.add_argument("--run", action="store_true", default=False, help="run a command in the virtual env")
   parser.add_argument("vars", nargs="*")
 
