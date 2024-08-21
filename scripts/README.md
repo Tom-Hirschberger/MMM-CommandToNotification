@@ -583,6 +583,33 @@ The output contains a error flag which will be set to "true" if the sensor could
 * Find the id of your sensor (starting with "28-") in `/sys/bus/w1/devices`: `ls /sys/bus/w1/devices/ | grep 28-`
 * Check if you get values: `cat /sys/bus/w1/devices/YOUR_SENSOR_ID/w1_slave`
 
+* Install the Python Virtual Environment System Package:
+
+```bash
+sudo apt -y update && sudo apt -y install python3-venv
+```
+
+* Use the wrapper script to create the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-Temperature/scripts
+./venvWrapper.py --verbose --venv-name py-venv --create
+```
+
+* Use the wrapper script to install the dependencies in the virtual environment:
+
+```bash
+cd ~/MagicMirror/modules/MMM-Temperature/scripts
+./venvWrapper.py --venv-name py-venv --install-libs json
+```
+
+* Use the wrapper script to run the python script:
+
+```bash
+cd ~/MagicMirror/modules/MMM-Temperature/scripts
+./venvWrapper.py --venv-name py-venv --run ./temperature/ds18b20 YOUR_SENSOR-id
+```
+
 ### Options
 
 | Option  | Description | Type | Default |
@@ -633,7 +660,7 @@ This config results in:
 
 * the DS18b20 has the id "123456"
 * if the script does not return a value within 3000ms it will be killed
-* the script will be called every 45 seconds
+* the script will be called every 45 seconds by the wrapper
 * the values will be published with the notification `TEMPERATURE`
 
 ## flowercare-mm.json
