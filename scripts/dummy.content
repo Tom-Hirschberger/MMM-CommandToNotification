@@ -1,7 +1,1 @@
-{
-    "test_data": {
-      "temp": -10.0123,
-      "humidity": 50.4567,
-      "test_string:": "this is a test"
-    }
-}
+{"data":{"did":"001D0A71573B","ts":1716603038,"conditions":[{"lsid":434637,"data_structure_type":1,"txid":1,"temp": 56.9,"hum":72.8,"dew_point": 48.3,"wet_bulb": 51.5,"heat_index": 56.2,"wind_chill": 56.9,"thw_index": 56.2,"thsw_index":null,"wind_speed_last":2.00,"wind_dir_last":146,"wind_speed_avg_last_1_min":2.00,"wind_dir_scalar_avg_last_1_min":157,"wind_speed_avg_last_2_min":2.00,"wind_dir_scalar_avg_last_2_min":157,"wind_speed_hi_last_2_min":5.00,"wind_dir_at_hi_speed_last_2_min":169,"wind_speed_avg_last_10_min":1.31,"wind_dir_scalar_avg_last_10_min":180,"wind_speed_hi_last_10_min":5.00,"wind_dir_at_hi_speed_last_10_min":169,"rain_size":1,"rain_rate_last":0,"rain_rate_hi":0,"rainfall_last_15_min":0,"rain_rate_hi_last_15_min":0,"rainfall_last_60_min":0,"rainfall_last_24_hr":7,"rain_storm":7,"rain_storm_start_at":1716576961,"solar_rad":null,"uv_index":null,"rx_state":0,"trans_battery_flag":0,"rainfall_daily":7,"rainfall_monthly":155,"rainfall_year":3713,"rain_storm_last":40,"rain_storm_last_start_at":1716299460,"rain_storm_last_end_at":1716433260},{"lsid":434634,"data_structure_type":4,"temp_in": 83.5,"hum_in":29.5,"dew_point_in": 48.4,"heat_index_in": 81.5},{"lsid":434633,"data_structure_type":3,"bar_sea_level":29.826,"bar_trend":-0.038,"bar_absolute":29.365}]},"error":null}

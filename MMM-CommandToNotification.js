@@ -1,33 +1,31 @@
-/* global Module
-
 /* MagicMirror²
  * Module: CommandToNotification
  *
  * By Tom Hirschberger
  * MIT Licensed.
- */  
-Module.register('MMM-CommandToNotification', {
+ */
+Module.register("MMM-CommandToNotification", {
 
-  defaults: {
-    updateInterval: 30,
-    commands: [],
-    sync: true,
-    debug: false
-  },
+	defaults: {
+		updateInterval: 30,
+		commands: [],
+		sync: true,
+		debug: false
+	},
 
-  start: function () {
-    const self = this
-    self.sendSocketNotification("CONFIG",self.config)
-  },
+	start() {
+		const self = this
+		self.sendSocketNotification("CONFIG", self.config)
+	},
 
-  notificationReceived: function (notification, payload) {
-    const self = this
-  },
+	// notificationReceived(notification, payload) {
+	// 	const self = this
+	// },
 
-  socketNotificationReceived: function (notification, payload) {
-    const self = this
-    if(notification.startsWith("RESULT_")){
-      self.sendNotification(notification.substring(7), payload)
-    }
-  },
+	socketNotificationReceived(notification, payload) {
+		const self = this
+		if (notification.startsWith("RESULT_")) {
+			self.sendNotification(notification.substring(7), payload)
+		}
+	},
 })

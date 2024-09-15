@@ -125,3 +125,9 @@ Add the following example to produce the following result:
 #### My Prusa MK4 3D-Printer setup
 
 <img src="examples/exampleSetup.png" alt="Curl->MMM-CommandToNotification->MMM-ValuesByNotification" width="600px"/>
+
+## Developer commands
+
+* `npm install` - Install devDependencies like ESLint.
+* `npm run lint` - Run linting and formatter checks.
+* `npm run lint:fix` - Fix linting and formatter issues.
