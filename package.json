@@ -4,7 +4,6 @@
   "description": "A MagicMirror² module which calls system-commands or scripts periodically and sends the output as notifications.",
   "main": "MMM-CommandToNotification",
   "dependencies": {},
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:Tom-Hirschberger/MMM-CommandToNotification.git"
@@ -26,5 +25,16 @@
   "bugs": {
     "url": "https://github.com/Tom-Hirschberger/MMM-CommandToNotification/issues"
   },
-  "homepage": "https://github.com/Tom-Hirschberger/MMM-CommandToNotification/#readme"
+  "homepage": "https://github.com/Tom-Hirschberger/MMM-CommandToNotification/#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@stylistic/eslint-plugin": "^2.8.0",
+    "eslint": "^9.10.0",
+    "globals": "^15.9.0"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "npm run lint"
+  }
 }
