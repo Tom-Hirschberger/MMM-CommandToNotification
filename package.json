@@ -1,16 +1,14 @@
 {
-  "name": "MMM-CommandToNotification",
-  "version": "0.0.8",
+  "name": "mmm-commandtonotification",
+  "version": "0.0.9",
   "description": "A MagicMirror² module which calls system-commands or scripts periodically and sends the output as notifications.",
-  "main": "MMM-CommandToNotification",
-  "dependencies": {},
+  "main": "MMM-CommandToNotification.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:Tom-Hirschberger/MMM-CommandToNotification.git"
   },
   "keywords": [
     "MagicMirror",
-    "MM",
     "scripts",
     "commands",
     "notifications",
