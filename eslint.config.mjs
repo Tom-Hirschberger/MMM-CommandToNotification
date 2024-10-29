@@ -7,9 +7,6 @@ const config = [
 		files: ["**/*.js", "**/*.mjs"],
 	},
 	{
-		ignores: ["**/doc/configs/webcam-config.js"],
-	},
-	{
 		languageOptions: {
 			globals: {
 				...globals.browser,
