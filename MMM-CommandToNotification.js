@@ -1,5 +1,5 @@
 /* MagicMirror²
- * Module: CommandToNotification
+ * Module: MMM-CommandToNotification
  *
  * By Tom Hirschberger
  * MIT Licensed.

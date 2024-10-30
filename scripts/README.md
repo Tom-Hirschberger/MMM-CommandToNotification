@@ -17,7 +17,7 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
+- Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
 if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
@@ -27,27 +27,27 @@ if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a
 sudo reboot
 ```
 
-* Install the Python Virtual Environment System Package:
+- Install the Python Virtual Environment System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs smbus
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -56,36 +56,35 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 
 ### Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| First argument | The I2C address of the sensor | String | 0x76 |
+| Option         | Description                   | Type   | Default |
+| -------------- | ----------------------------- | ------ | ------- |
+| First argument | The I2C address of the sensor | String | 0x76    |
 
 ### Example output
 
 Real:
 
 ```json
-{"temperature_c": 22.0, "humidity": 62.1, "pressure": 512.0, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "humidity": 62.1, "pressure": 512.0, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "humidity": 62.1,
-    "pressure": 512.0,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "humidity": 62.1,
+  "pressure": 512.0,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 30,
     commands: [
@@ -104,10 +103,10 @@ Pritty Print:
 
 This config results in:
 
-* the BME280 sensor has the address 0x76
-* if the script does not return a value within 1000ms it will be killed
-* the script will be called by the wrapper every 30 seconds
-* the values will be published with the notification `TEMPERATURE`
+- the BME280 sensor has the address 0x76
+- if the script does not return a value within 1000ms it will be killed
+- the script will be called by the wrapper every 30 seconds
+- the values will be published with the notification `TEMPERATURE`
 
 ## temperature/dht11
 
@@ -117,27 +116,27 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Install the Python Virtual Environment and `libgpiod2` System Package:
+- Install the Python Virtual Environment and `libgpiod2` System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv libgpiod2
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-dht
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -146,35 +145,34 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 
 ### Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| First argument | The number of the GPIO the sensor is connected to | Integer | 4 |
+| Option         | Description                                       | Type    | Default |
+| -------------- | ------------------------------------------------- | ------- | ------- |
+| First argument | The number of the GPIO the sensor is connected to | Integer | 4       |
 
 ### Example output
 
 Real:
 
 ```json
-{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "humidity": 62.1,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "humidity": 62.1,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 30,
     commands: [
@@ -193,10 +191,10 @@ Pritty Print:
 
 This config results in:
 
-* the DHT11 sensor is connected to GPIO 4
-* if the script does not return a value within 2000ms it will be killed
-* the script will be called by the wrapper every 30 seconds
-* the values will be published with the notification `TEMPERATURE`
+- the DHT11 sensor is connected to GPIO 4
+- if the script does not return a value within 2000ms it will be killed
+- the script will be called by the wrapper every 30 seconds
+- the values will be published with the notification `TEMPERATURE`
 
 ## temperature/dht22
 
@@ -206,27 +204,27 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Install the Python Virtual Environment and `libgpiod2` System Package:
+- Install the Python Virtual Environment and `libgpiod2` System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv libgpiod2
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-dht
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -235,35 +233,34 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 
 ### Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| First argument | The number of the GPIO the sensor is connected to | Integer | 4 |
+| Option         | Description                                       | Type    | Default |
+| -------------- | ------------------------------------------------- | ------- | ------- |
+| First argument | The number of the GPIO the sensor is connected to | Integer | 4       |
 
 ### Example output
 
 Real:
 
 ```json
-{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "humidity": 62.1,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "humidity": 62.1,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 30,
     commands: [
@@ -282,10 +279,10 @@ Pritty Print:
 
 This config results in:
 
-* the DHT22 sensor is connected to GPIO 4
-* if the script does not return a value within 2000ms it will be killed
-* the script will be called by the wrapper every 30 seconds
-* the values will be published with the notification `TEMPERATURE`
+- the DHT22 sensor is connected to GPIO 4
+- if the script does not return a value within 2000ms it will be killed
+- the script will be called by the wrapper every 30 seconds
+- the values will be published with the notification `TEMPERATURE`
 
 ## temperature/htu21
 
@@ -295,7 +292,7 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
+- Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
 if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
@@ -305,27 +302,27 @@ if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a
 sudo reboot
 ```
 
-* Install the Python Virtual Environment System Package:
+- Install the Python Virtual Environment System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-htu21d
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -337,26 +334,25 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 Real:
 
 ```json
-{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "humidity": 62.1,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "humidity": 62.1,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 30,
     commands: [
@@ -375,9 +371,9 @@ Pritty Print:
 
 This config results in:
 
-* if the script does not return a value within 2000ms it will be killed
-* the script will be called by the wrapper every 30 seconds
-* the values will be published with the notification `TEMPERATURE`
+- if the script does not return a value within 2000ms it will be killed
+- the script will be called by the wrapper every 30 seconds
+- the values will be published with the notification `TEMPERATURE`
 
 ## temperature/sht31d
 
@@ -387,7 +383,7 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
+- Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
 if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
@@ -397,27 +393,27 @@ if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a
 sudo reboot
 ```
 
-* Install the Python Virtual Environment System Package:
+- Install the Python Virtual Environment System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs adafruit-circuitpython-sht31d
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -429,26 +425,25 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 Real:
 
 ```json
-{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "humidity": 62.1,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "humidity": 62.1,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 30,
     commands: [
@@ -467,9 +462,9 @@ Pritty Print:
 
 This config results in:
 
-* if the script does not return a value within 2000ms it will be killed
-* the script will be called by the wrapper every 30 seconds
-* the values will be published with the notification `TEMPERATURE`
+- if the script does not return a value within 2000ms it will be killed
+- the script will be called by the wrapper every 30 seconds
+- the values will be published with the notification `TEMPERATURE`
 
 ## temperature/shtc3
 
@@ -479,7 +474,7 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
+- Make sure to enable the I2C bus of the system by running this commands in the shell and reboot the system:
 
 ```bash
 if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a /etc/modules; echo "Added"; else echo "Skipped"; fi
@@ -489,27 +484,27 @@ if [ `grep -c "i2c-dev" /etc/modules` -lt 1 ]; then echo "i2c-dev" | sudo tee -a
 sudo reboot
 ```
 
-* Install the Python Virtual Environment System Package:
+- Install the Python Virtual Environment System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs smbus2
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -521,26 +516,25 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 Real:
 
 ```json
-{"temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "humidity": 62.1, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "humidity": 62.1,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "humidity": 62.1,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 30,
     commands: [
@@ -559,9 +553,9 @@ Pritty Print:
 
 This config results in:
 
-* if the script does not return a value within 2000ms it will be killed
-* the script will be called by the wrapper every 30 seconds
-* the values will be published with the notification `TEMPERATURE`
+- if the script does not return a value within 2000ms it will be killed
+- the script will be called by the wrapper every 30 seconds
+- the values will be published with the notification `TEMPERATURE`
 
 ## temperature/ds18b20
 
@@ -571,39 +565,39 @@ The output contains a error flag which will be set to "true" if the sensor could
 
 ### Requirements
 
-* Connect VCC pin to 3.3V
-* #Connect Ground pin to Ground
-* Add an 4.7kOhm resister between data wire and VCC
-* Add the the data wire to GPIO4 (which is the 1-wire bus pin) (more info at: https://www.circuitbasics.com/raspberry-pi-ds18b20-temperature-sensor-tutorial/)
-* Add the following lines to `/etc/modules`
-  * `w1_gpio`
-  * `w1_therm`
-* Add the following line to `/etc/boot/config.txt`
-  * `dtoverlay=w1-gpio`
-* Find the id of your sensor (starting with "28-") in `/sys/bus/w1/devices`: `ls /sys/bus/w1/devices/ | grep 28-`
-* Check if you get values: `cat /sys/bus/w1/devices/YOUR_SENSOR_ID/w1_slave`
+- Connect VCC pin to 3.3V
+- #Connect Ground pin to Ground
+- Add an 4.7kOhm resister between data wire and VCC
+- Add the the data wire to GPIO4 (which is the 1-wire bus pin) (more info at: https://www.circuitbasics.com/raspberry-pi-ds18b20-temperature-sensor-tutorial/)
+- Add the following lines to `/etc/modules`
+  - `w1_gpio`
+  - `w1_therm`
+- Add the following line to `/etc/boot/config.txt`
+  - `dtoverlay=w1-gpio`
+- Find the id of your sensor (starting with "28-") in `/sys/bus/w1/devices`: `ls /sys/bus/w1/devices/ | grep 28-`
+- Check if you get values: `cat /sys/bus/w1/devices/YOUR_SENSOR_ID/w1_slave`
 
-* Install the Python Virtual Environment System Package:
+- Install the Python Virtual Environment System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-Temperature/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-Temperature/scripts
 ./venvWrapper.py --venv-name py-venv --install-libs json
 ```
 
-* Use the wrapper script to run the python script:
+- Use the wrapper script to run the python script:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-Temperature/scripts
@@ -612,34 +606,33 @@ cd ~/MagicMirror/modules/MMM-Temperature/scripts
 
 ### Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| First argument | The id of the sensor is | String | null |
+| Option         | Description             | Type   | Default |
+| -------------- | ----------------------- | ------ | ------- |
+| First argument | The id of the sensor is | String | null    |
 
 ### Example output
 
 Real:
 
 ```json
-{"temperature_c": 22.0, "temperature_f": 71.6, "error": false}
+{ "temperature_c": 22.0, "temperature_f": 71.6, "error": false }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "temperature_c": 22.0,
-    "temperature_f": 71.6,
-    "error": false
+  "temperature_c": 22.0,
+  "temperature_f": 71.6,
+  "error": false
 }
 ```
 
 ### Example config
 
-```json5
+```js
   {
    module: "MMM-CommandToNotification",
-   disabled: false,
    config: {
     updateInterval: 45,
     commands: [
@@ -658,10 +651,10 @@ Pritty Print:
 
 This config results in:
 
-* the DS18b20 has the id "123456"
-* if the script does not return a value within 3000ms it will be killed
-* the script will be called every 45 seconds by the wrapper
-* the values will be published with the notification `TEMPERATURE`
+- the DS18b20 has the id "123456"
+- if the script does not return a value within 3000ms it will be killed
+- the script will be called every 45 seconds by the wrapper
+- the values will be published with the notification `TEMPERATURE`
 
 ## flowercare-mm.json
 
@@ -670,20 +663,20 @@ Please see "flowercare/flowercare-mm.json" file for configuration options.
 
 ### Requirements
 
-* Install the Python Virtual Environment System Package:
+- Install the Python Virtual Environment System Package:
 
 ```bash
 sudo apt -y update && sudo apt -y install python3-venv
 ```
 
-* Use the wrapper script to create the virtual environment:
+- Use the wrapper script to create the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 ./venvWrapper.py --verbose --venv-name py-venv --create
 ```
 
-* Use the wrapper script to install the dependencies in the virtual environment:
+- Use the wrapper script to install the dependencies in the virtual environment:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
@@ -692,8 +685,8 @@ cd ~/MagicMirror/modules/MMM-CommandToNotification/scripts
 
 ## Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
+| Option         | Description                         | Type   | Default                                                                                   |
+| -------------- | ----------------------------------- | ------ | ----------------------------------------------------------------------------------------- |
 | First argument | The path of the configuration file. | String | /home/pi/MagicMirror/modules/MMM-CommandToNotification/scripts/flowercare/flowercare.json |
 
 ### Example output
@@ -706,21 +699,21 @@ You do not need to read all possible values of a sensor. Reading only the values
 Real:
 
 ```json
-{"Flower1": {"temperature": 21.6, "moisture": 62, "light": 0, "conducitivity": 1044, "battery": 50}, "Flower2": "error"}
+{ "Flower1": { "temperature": 21.6, "moisture": 62, "light": 0, "conducitivity": 1044, "battery": 50 }, "Flower2": "error" }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "Flower1": {
-        "battery": 50,
-        "conducitivity": 1044,
-        "light": 0,
-        "moisture": 62,
-        "temperature": 21.6
-    },
-    "Flower2": "error"
+  "Flower1": {
+    "battery": 50,
+    "conducitivity": 1044,
+    "light": 0,
+    "moisture": 62,
+    "temperature": 21.6
+  },
+  "Flower2": "error"
 }
 ```
 
@@ -732,11 +725,11 @@ To save the timestamp of the last run a temporary file will be created. The path
 
 ## Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| -f | The path of the file to watch | String | "/home/pi/TeleFrame/images/images.json" |
-| -t | The path of the temporary file to use to save the timestamp | String | ""/tmp/fileWatch.date |
-| -m | The minium time that needs to be past before the change will be accepted | Integer | 1 |
+| Option | Description                                                              | Type    | Default                                 |
+| ------ | ------------------------------------------------------------------------ | ------- | --------------------------------------- |
+| -f     | The path of the file to watch                                            | String  | "/home/pi/TeleFrame/images/images.json" |
+| -t     | The path of the temporary file to use to save the timestamp              | String  | ""/tmp/fileWatch.date                   |
+| -m     | The minium time that needs to be past before the change will be accepted | Integer | 1                                       |
 
 ## Example output
 
@@ -775,10 +768,10 @@ Generates a random integer within a configurable range.
 
 ### Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| First argument | The minimal value | Integer | -10 |
-| Second argument | The maximum value | Integer | 10 |
+| Option          | Description       | Type    | Default |
+| --------------- | ----------------- | ------- | ------- |
+| First argument  | The minimal value | Integer | -10     |
+| Second argument | The maximum value | Integer | 10      |
 
 ### Example output
 
@@ -792,24 +785,24 @@ Generates a random number within a configurable range and return it as float and
 
 ### Options
 
-| Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
-| First argument | The minimal value | Integer | -10 |
-| Second argument | The maximum value | Integer | 10 |
+| Option          | Description       | Type    | Default |
+| --------------- | ----------------- | ------- | ------- |
+| First argument  | The minimal value | Integer | -10     |
+| Second argument | The maximum value | Integer | 10      |
 
 ### Example output
 
 Real:
 
 ```json
-{"integer":4,"float":4.414833739448628}
+{ "integer": 4, "float": 4.414833739448628 }
 ```
 
 Pritty Print:
 
 ```json
 {
-    "integer": 4,
-    "float": 4.414833739448628
+  "integer": 4,
+  "float": 4.414833739448628
 }
 ```

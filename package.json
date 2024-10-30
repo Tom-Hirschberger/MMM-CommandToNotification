@@ -1,16 +1,14 @@
 {
-  "name": "MMM-CommandToNotification",
-  "version": "0.0.8",
+  "name": "mmm-commandtonotification",
+  "version": "0.0.9",
   "description": "A MagicMirror² module which calls system-commands or scripts periodically and sends the output as notifications.",
-  "main": "MMM-CommandToNotification",
-  "dependencies": {},
+  "main": "MMM-CommandToNotification.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:Tom-Hirschberger/MMM-CommandToNotification.git"
   },
   "keywords": [
     "MagicMirror",
-    "MM",
     "scripts",
     "commands",
     "notifications",
@@ -27,14 +25,15 @@
   },
   "homepage": "https://github.com/Tom-Hirschberger/MMM-CommandToNotification/#readme",
   "devDependencies": {
-    "@eslint/js": "^9.10.0",
-    "@stylistic/eslint-plugin": "^2.8.0",
-    "eslint": "^9.10.0",
-    "globals": "^15.9.0"
+    "@eslint/js": "^9.13.0",
+    "@stylistic/eslint-plugin": "^2.9.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3"
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . && prettier . --check",
+    "lint:fix": "eslint . --fix && prettier . --write",
     "test": "npm run lint"
   }
 }
