@@ -7,10 +7,10 @@
 const Log = require("logger")
 const NodeHelper = require("node_helper")
 
-const spawnSync = require("child_process").spawnSync
-const spawn = require("child_process").spawn
-const fs = require("fs")
-const path = require("path")
+const spawnSync = require("node:child_process").spawnSync
+const spawn = require("node:child_process").spawn
+const fs = require("node:fs")
+const path = require("node:path")
 const scriptsDir = path.join(__dirname, "/scripts")
 
 module.exports = NodeHelper.create({
@@ -24,8 +24,7 @@ module.exports = NodeHelper.create({
 	},
 
 	sleep(milliseconds) {
-		// eslint-disable-next-line no-promise-executor-return
-		return new Promise(resolve => setTimeout(resolve, milliseconds))
+		return new Promise((resolve) => { setTimeout(resolve, milliseconds) })
 	},
 
 	// https://stackoverflow.com/questions/14332721/node-js-spawn-child-process-and-get-terminal-output-live
@@ -237,7 +236,6 @@ module.exports = NodeHelper.create({
 						if (self.config.debug) {
 							Log.log(`${self.name}: Delaying next: ${curCmdConfig.delayNext}`)
 						}
-						// eslint-disable-next-line no-await-in-loop
 						await self.sleep(curCmdConfig.delayNext)
 					}
 				} else {
