@@ -92,11 +92,11 @@ Add the following example to produce the following result:
 - the scripts will be iterated every 10 seconds
 - the script "scripts/randomInteger.js" gets called every iteration
   - a random number between -10 and 10 is produced
-  - the timeout of the script is 5 seconds. If the script does not produce any output within 5 seconds the call will be aborted and no notifications will be send
+  - the timeout of the script is 1000 milliseconds. If the script does not produce any output within 1000 milliseconds the call will be aborted and no notifications will be send
   - if the script produces output the output will be send as payload of the notifications TEST1 and TEST2
 - the script "scripts/randomNumberJson.js" will be called every fourth iteration because a three skips are configured
   - the script calculates a random number between -50 and 20 and produces a json object containing two values ("integer" and "float"). The float value is the random number the integer value the random number rounded as integer.
-  - the timeout of the script is set to 10 seconds
+  - the timeout of the script is set to 2000 milliseconds
   - the result of the script (JSON object as string) will be send as payload of notification TEST3 while TEST4 will be send with payload "true"
   - As the condition `returnCode` is set to `[0,1,2]` the notifications `TEST3` and `TEST4` only will be send if the script `./randomNumberJson.js` only will be send if the script exits with code 0, 1 or 2
 
@@ -109,7 +109,7 @@ Add the following example to produce the following result:
         {
           script: "./randomInteger.js",
           args: "-10 10",
-          timeout: 5,
+          timeout: 1000,
           notifications: [
             "TEST1",
             "TEST2",
@@ -119,10 +119,10 @@ Add the following example to produce the following result:
         script: "./randomNumberJson.js",
         args: "-50 20",
         skips: 3,
-        timeout: 10,
+        timeout: 2000,
         conditions: {
           returnCode: [0,1,2]
-        }
+        },
         notifications: [
           "TEST3",
           ["TEST4", true]
